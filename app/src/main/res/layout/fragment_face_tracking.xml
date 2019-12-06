@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/white">
+
+        <!-- TODO:  творите по макету :) Gif + описание действия + Камера + Overlay над камерой
+            "Задача со звездочкой" - после выполнения эмоции игроком,
+            поверх нее должен появляться Overlay с "Галочкой"
+            и текстом "Верно!"-->
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>
