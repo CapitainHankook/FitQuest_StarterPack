@@ -62,7 +62,7 @@ class GameToolbar(context: Context, widthScreen : Float) {
 
     private fun timeToText() : String {
         val second = time.toInt() % 60
-        val secondStr : String = if(second < 2) "0" + second.toString() else second.toString()
+        val secondStr : String = if(second < 10) "0" + second.toString() else second.toString()
         return "0" + (time.toInt() / 60).toString() + ":" + secondStr
     }
 

@@ -39,6 +39,7 @@ class Game(
 
     private var canvas: Canvas = Canvas()
     private val paint: Paint = Paint()
+
     private var timeWidhoutShot = 0f
 
     companion object {
@@ -195,13 +196,22 @@ class Game(
             bird.MoveAgain()
 
         if (finish.isCollision(bird.position.top)) {
-            playing = false
-            resultGame(true)
-        }
+            if (bird.position.top > Bonus.generateWhenPositionY) {
 
+                bonuses += Bonus.create(bird.position, size.x, size.y)
+            }
+            if (finish.isCollision(bird.position.top)) {
+                playing = false
+                resultGame(true)
+            }
+        }
         if (gameToolbar.getTime() <= 0) {
             playing = false
             resultGame(false)
+        }
+
+        for (bonus in bonuses) {
+            bonus.update(dt)
         }
     }
 
@@ -212,6 +222,7 @@ class Game(
     private fun onBonusTime() {
         gameToolbar.catchupTimeBonus()
     }
+
 
     private fun findCollisionBlock(bullet: Bullet): Block? {
         for (block in blocks) {
@@ -250,7 +261,12 @@ class Game(
                     bullet.draw(canvas, paint, viewport)
                 }
 
+                for (block in blocks)
+                {
+                    block.draw(canvas,paint,viewport)
+                }
                 for (bonus in bonuses) {
+
                     bonus.draw(canvas, paint, viewport, context)
                 }
 
