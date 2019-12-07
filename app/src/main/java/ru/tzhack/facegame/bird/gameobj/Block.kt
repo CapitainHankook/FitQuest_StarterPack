@@ -41,7 +41,7 @@ class Block(
         // растояние между блоками по горизонтали
         private const val spaceSize = 300f
         // растояние между блоками по вертикали
-        private const val wallsSpacing = 300
+        private const val wallsSpacing = 450
         // координата первого блока
         private const val startY = 1000f
 

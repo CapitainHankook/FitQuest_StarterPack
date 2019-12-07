@@ -11,6 +11,7 @@ import android.view.SurfaceView
 import androidx.core.content.ContextCompat
 import ru.tzhack.facegame.R
 import ru.tzhack.facegame.bird.gameobj.*
+import ru.tzhack.facegame.bird.utils.Position
 import ru.tzhack.facegame.data.model.FaceEmoji
 
 
@@ -145,7 +146,7 @@ class Game(
     private fun update(dt: Float) {
         timeWidhoutShot += dt
 
-        bird.update(dt)
+        bird.update(dt, blocks)
         gameToolbar.update(dt)
         viewport.centreCamera(bird.position)
         val stayBullet = arrayListOf<Bullet>()
@@ -155,6 +156,18 @@ class Game(
                 bullet.update(dt)
             }
         }
+        var found: Boolean=false
+        for( block in blocks)
+        {
+            if(block.checkOnCollision(bird.position))
+            {
+                bird.Stop()
+                found=true
+            }
+        }
+        if (!found)
+            bird.MoveAgain()
+
         bullets = stayBullet
 
         for (bullet in bullets) {
@@ -178,17 +191,7 @@ class Game(
         }
 
         return null
-        var found: Boolean=false
-        for( block in blocks)
-        {
-            if(block.checkOnCollision(bird.position))
-            {
-                bird.Stop()
-                found=true
-            }
-        }
-        if (!found)
-            bird.MoveAgain()
+
     }
 
 

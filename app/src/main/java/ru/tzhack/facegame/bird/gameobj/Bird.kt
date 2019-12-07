@@ -42,11 +42,12 @@ class Bird(
     enum class Napr {
         LEFT, JUST, RIGTH
     }
-    enum class NotLeftRigh {
-        NOLEFT, EMPTY, NORIGTH
+    enum class LfRg
+    {
+        NOLEFT, NORIGTH, UP
     }
-    var nlr=NotLeftRigh.EMPTY
-    var move: Boolean =true
+    var nlf: LfRg=LfRg.UP;
+    var move: Boolean =true;
     var napr: Napr=Napr.JUST;
 
 
@@ -58,30 +59,40 @@ class Bird(
      * 5. Обработка состояния выстрела
      * 6. Обработка эффекта от бонуса
      */
-    fun update(dt: Float) {
+    fun update(dt: Float, blocks : ArrayList<Block>) {
         //шагвверх
         if (move)
             position.top+= dt* SPEED_VERTICAL_DEFAULT;
 
         sprAni.update(dt);
-        if (napr==Napr.LEFT&&position.left>0&&nlr!=NotLeftRigh.NOLEFT)
-            position.left-=dt* MAX_SPEED_HORIZONTAL;
-        if (napr==Napr.RIGTH&&position.left<screenX-WIDTH_SPRITE&&nlr!=NotLeftRigh.NORIGTH)
-           position.left+=dt* MAX_SPEED_HORIZONTAL;
-        Empty()
 
-    }
-    fun NoLeft()
-    {
-        nlr=NotLeftRigh.NOLEFT
-    }
-    fun NoRigth ()
-    {
-        nlr=NotLeftRigh.NORIGTH
-    }
-    fun Empty ()
-    {
-        nlr=NotLeftRigh.EMPTY
+        var noLfRg=false
+        val pos1=Position(position.left-dt* MAX_SPEED_HORIZONTAL, position.top, WIDTH_SPRITE, HEIGHT_SPRITE);
+        val pos2=Position(position.left+dt* MAX_SPEED_HORIZONTAL, position.top, WIDTH_SPRITE, HEIGHT_SPRITE);
+        for( block in blocks)
+        {
+            if(block.checkOnCollision(pos1))
+            {
+                nlf=LfRg.NOLEFT
+                noLfRg=true;
+            }
+            if(block.checkOnCollision(pos2))
+            {
+                nlf=LfRg.NORIGTH
+                noLfRg=true;
+            }
+            if (!noLfRg)
+            {
+                nlf=LfRg.UP
+            }
+        }
+
+
+        if (napr==Napr.LEFT&&position.left>0&&nlf!=LfRg.NOLEFT)
+            position.left-=dt* MAX_SPEED_HORIZONTAL;
+        if (napr==Napr.RIGTH&&position.left<screenX-WIDTH_SPRITE&&nlf!=LfRg.NORIGTH)
+           position.left+=dt* MAX_SPEED_HORIZONTAL;
+
     }
     fun Left()
     {
