@@ -8,8 +8,8 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
-    <!-- todo: SplashTheme parent AppTheme -->
-    <!-- windowBackground, statusBarColor -->
-    <!-- @drawable/background_splash, @color/colorPrimaryBackground -->
+    <style name="AppTheme.SplashTheme">
+        <item name="android:windowBackground">@drawable/background_splash</item>
+    </style>
 
 </resources>

@@ -1,7 +1,10 @@
 package ru.tzhack.facegame.welcome
 
+import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
 import androidx.appcompat.app.AppCompatActivity
+import ru.tzhack.facegame.MainActivity
 
 //TODO: ЗАДАНИЕ #1
 /**
@@ -24,6 +27,10 @@ class SplashActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        //TODO: Handler для запуска отложенной задачи - открытие MainActivity.
+        Handler().postDelayed(
+            {
+                startActivity(Intent(this, MainActivity::class.java))
+            }, 500
+        )
     }
 }
