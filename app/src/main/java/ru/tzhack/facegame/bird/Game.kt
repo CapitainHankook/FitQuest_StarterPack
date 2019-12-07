@@ -29,31 +29,29 @@ class Game(
         context: Context,
         private val size: Point,
         private val resultGame: (Boolean) -> Unit
-        ) : SurfaceView(context),
-    Runnable {
+) : SurfaceView(context),
+        Runnable {
 
     private var playing = false
     var pause = true
     private var thread: Thread? = null
-    private val viewport : Viewport
+    private val viewport: Viewport
 
     private var canvas: Canvas = Canvas()
     private val paint: Paint = Paint()
 
     private var timeWidhoutShot = 0f
 
-    val bird: Bird = Bird(context, (size.x).toFloat())
-    val blocks = Block.generate(context, size.x.toFloat(),20)
-    val bonuses = arrayListOf<Bonus>()
     companion object {
         // выстрел не чаще
         private const val SHOT_DEPOUNCE = 2f
-        private const val COORD_END_GAME = 7000F
+        private const val COORD_END_GAME = 12200F
 
     }
 
-
-    //val bonus : Bonus
+    private val bird: Bird = Bird(context, (size.x).toFloat())
+    private var blocks: ArrayList<Block>
+    val bonuses = arrayListOf<Bonus>()
     private var bullets: ArrayList<Bullet>
     private val finish: Finish
     private val gameToolbar: GameToolbar
@@ -61,7 +59,7 @@ class Game(
     init {
         paint.textSize = 50f
         viewport = Viewport(this, size.x.toFloat(), size.y.toFloat())
-
+        blocks = Block.generate(context, size.x.toFloat(), 25)
         //bonus = Bonus.create()
         bullets = arrayListOf<Bullet>()
         gameToolbar = GameToolbar(this.context, size.x.toFloat())
@@ -101,11 +99,6 @@ class Game(
 
             draw()
 
-//            val timeThisFrame = SystemClock.uptimeMillis() - time
-//            if (timeThisFrame >= 1) {
-//                val fps = 1000 / timeThisFrame
-//                Log.d("thread", "fps:$fps")
-//            }
         }
     }
 
@@ -116,6 +109,7 @@ class Game(
             FaceEmoji.HEAD_ROTATE_RIGHT -> onHeadRotateRight()
         }
     }
+
     @Synchronized
     private fun onSmile() {
         if (timeWidhoutShot >= SHOT_DEPOUNCE) {
@@ -125,10 +119,12 @@ class Game(
         }
 
     }
+
     @Synchronized
     private fun onHeadRotateLeft() {
         bird.Left()
     }
+
     @Synchronized
     private fun onHeadRotateRight() {
         bird.Right()
@@ -188,12 +184,16 @@ class Game(
                 resultGame(true)
             }
         }
+        if (gameToolbar.getTime() <= 0) {
+            playing = false
+            resultGame(false)
+        }
 
-        for (bonus in bonuses)
-        {
+        for (bonus in bonuses) {
             bonus.update(dt)
         }
     }
+
 
     private fun findCollisionBlock(bullet: Bullet): Block? {
         for (block in blocks) {
