@@ -20,7 +20,7 @@ enum class BonusType {
  * 1. [create]
  * 2. [update]
  * 3. [draw]
- * 4. Проверка столкновений
+ * 4.  Проверка столкновений
  */
 class Bonus(
     private val position: Position,
