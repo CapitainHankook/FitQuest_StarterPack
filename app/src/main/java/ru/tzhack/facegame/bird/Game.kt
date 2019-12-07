@@ -196,13 +196,22 @@ class Game(
             bird.MoveAgain()
 
         if (finish.isCollision(bird.position.top)) {
-            playing = false
-            resultGame(true)
-        }
+            if (bird.position.top > Bonus.generateWhenPositionY) {
 
+                bonuses += Bonus.create(bird.position, size.x, size.y)
+            }
+            if (finish.isCollision(bird.position.top)) {
+                playing = false
+                resultGame(true)
+            }
+        }
         if (gameToolbar.getTime() <= 0) {
             playing = false
             resultGame(false)
+        }
+
+        for (bonus in bonuses) {
+            bonus.update(dt)
         }
     }
 
@@ -221,6 +230,7 @@ class Game(
         //gameToolbar.catchupTimeBonus()
         bird.SpeedDown()
     }
+
 
 
     private fun findCollisionBlock(bullet: Bullet): Block? {
@@ -260,7 +270,12 @@ class Game(
                     bullet.draw(canvas, paint, viewport)
                 }
 
+                for (block in blocks)
+                {
+                    block.draw(canvas,paint,viewport)
+                }
                 for (bonus in bonuses) {
+
                     bonus.draw(canvas, paint, viewport, context)
                 }
 
