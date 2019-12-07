@@ -1,7 +1,6 @@
 package ru.tzhack.facegame
 
 import android.app.Application
-import ru.tzhack.facegame.facetraking.mlkit.MlKitEngine
 
 class AppDelegate : Application() {
 
@@ -16,6 +15,6 @@ class AppDelegate : Application() {
         super.onCreate()
         instance = this
 
-        MlKitEngine.initMlKit()
+        //MlKitEngine.initMlKit()
     }
 }

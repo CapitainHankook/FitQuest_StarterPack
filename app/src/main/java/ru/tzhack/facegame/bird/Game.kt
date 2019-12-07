@@ -9,6 +9,7 @@ import android.os.SystemClock
 import android.view.SurfaceView
 import androidx.core.content.ContextCompat
 import ru.tzhack.facegame.R
+import ru.tzhack.facegame.bird.gameobj.*
 
 
 /**
@@ -23,14 +24,15 @@ import ru.tzhack.facegame.R
  */
 @SuppressLint("ViewConstructor")
 class Game(
-    context: Context,
-    private val size: Point
-) : SurfaceView(context),
+        context: Context,
+        private val size: Point
+        ) : SurfaceView(context),
     Runnable {
 
     private var playing = false
     var pause = true
     private var thread: Thread? = null
+    private val viewport : Viewport
 
     private var canvas: Canvas = Canvas()
     private val paint: Paint = Paint()
@@ -39,6 +41,23 @@ class Game(
         // выстрел не чаще
         private const val SHOT_DEPOUNCE = 2000
 
+    }
+
+    //val bird : Bird
+    val blocks : List<Block>
+    val bonuses : List<Bonus>
+    val bullets : List<Bullet>
+    val finish: Finish
+    val gameToolbar: GameToolbar
+
+    init {
+        viewport =  Viewport(this, size.x.toFloat(), size.y.toFloat())
+        blocks = arrayListOf<Block>()
+        bonuses = arrayListOf<Bonus>()
+        bullets = arrayListOf<Bullet>()
+        gameToolbar = GameToolbar(this.context)
+        finish = Finish(500f, 1000f, this.context)
+        viewport.y = 1000f
     }
 
     private val backgroundColor = ContextCompat.getColor(context, R.color.colorPrimaryDark)
@@ -92,7 +111,7 @@ class Game(
      *  @param dt - прошло секунт после обработки кадра
      */
     private fun update(dt: Float) {
-
+        finish.update()
     }
 
     /**
@@ -106,6 +125,7 @@ class Game(
 
                 canvas.drawColor(backgroundColor)
 
+                finish.draw(canvas, paint, viewport)
 
                 holder.unlockCanvasAndPost(canvas)
             }
