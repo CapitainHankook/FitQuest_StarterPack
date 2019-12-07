@@ -1,11 +1,13 @@
 package ru.tzhack.facegame
 
+import android.Manifest
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import ru.tzhack.facegame.bird.BirdFragment
 import ru.tzhack.facegame.facetraking.FaceGameOverListener
+import ru.tzhack.facegame.facetraking.FaceTrackingFragment
 
 private const val CAMERA_PERMISSION_REQUEST_CODE = 101
 
@@ -30,7 +32,7 @@ class MainActivity : AppCompatActivity(), /*BirdGameControlListener,*/ FaceGameO
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        showBonusGameFragment()
+        showGameFragment()
     }
 
     override fun onStartClick() {
@@ -64,9 +66,15 @@ class MainActivity : AppCompatActivity(), /*BirdGameControlListener,*/ FaceGameO
     }
 
     private fun showGameFragment() {
+        supportFragmentManager.beginTransaction()
+                .replace(R.id.fragment_container, FaceTrackingFragment.createFragment())
+                .commit()
+
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (hasCameraPermissions()) {
                 //TODO: fragmentManager -> replace FaceTrackingFragment
+
             } else {
                 //TODO: запрос разрешения на камеру
                 //TODO: requestPermissions(...)
@@ -81,9 +89,6 @@ class MainActivity : AppCompatActivity(), /*BirdGameControlListener,*/ FaceGameO
     }
 
     private fun showBonusGameFragment() {
-        supportFragmentManager.beginTransaction()
-                .replace(R.id.fragment_container, BirdFragment.createFragment())
-                .commit()
         //TODO: fragmentManager -> replace BirdFragment
     }
 }

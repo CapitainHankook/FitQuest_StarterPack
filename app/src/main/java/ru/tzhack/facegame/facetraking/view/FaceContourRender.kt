@@ -1,14 +1,12 @@
 package ru.tzhack.facegame.facetraking.view
 
 import android.content.Context
-import android.graphics.Canvas
-import android.graphics.Color
-import android.graphics.PorterDuff
-import android.graphics.Rect
+import android.graphics.*
 import android.util.AttributeSet
 import android.view.View
 import com.google.firebase.ml.vision.common.FirebaseVisionPoint
 import com.otaliastudios.cameraview.size.Size
+
 
 //TODO: ЗАДАНИЕ #3
 /**
@@ -25,15 +23,27 @@ class FaceContourRender @JvmOverloads constructor(
         defStyleAttr: Int = 0
 ) : View(context, attrs, defStyleAttr) {
 
+    private var rectanglePaintBox: Paint = Paint()
+
+    var rectangleColor = Color.GREEN
+    private var rectangleStrokeWidth = 1.5f
+
+    private var dotPaintCircle: Paint = Paint()
+
+    var dotColor = Color.WHITE
+
     private val dotSize = 3f
 
-    /*TODO: Создать два Paint объекта
-    *  1. Будем рисовать точки (белый)
-    *  2. Будем рисовать "квадрат" лица */
 
-    /* TODO: faceContour Создать List объектов FirebaseVisionPoint,
-    *   это точки, которые необходимо нарисовать */
+    init {
+        rectanglePaintBox.color = rectangleColor
+        rectanglePaintBox.style = Paint.Style.STROKE
+        rectanglePaintBox.strokeWidth = rectangleStrokeWidth
 
+        dotPaintCircle.color = dotColor
+    }
+
+    private var faceContour: List<FirebaseVisionPoint> = ArrayList()
     private var rect = Rect()
 
     private var widthScaleFactor = 1.0F
@@ -49,13 +59,12 @@ class FaceContourRender @JvmOverloads constructor(
             heightScaleFactor = height.toFloat() / it.height.toFloat()
         }
 
-        faceRect?.let {
-            rect = it.apply {
-                set(left.translateX(), top.translateY(), right.translateX(), bottom.translateY())
-            }
+        if (faceRect == null) rect.setEmpty()
+        else rect = faceRect.apply {
+            set(left.translateX(), top.translateY(), right.translateX(), bottom.translateY())
         }
 
-        //TODO: Очищаем старые точки , и добавляем новые (faceContour)
+        faceContour = points
 
         invalidate()
     }
@@ -63,19 +72,19 @@ class FaceContourRender @JvmOverloads constructor(
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
 
+        rectanglePaintBox.color = rectangleColor
+        rectanglePaintBox.strokeWidth = rectangleStrokeWidth
+
+        dotPaintCircle.color = dotColor
+
         if (this.width != 0 && this.height != 0) {
             canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR)
 
-            // TODO: Два цикла
-            // TODO: 1. пробегаемся по списку объектов FirebaseVisionPoint
-            // TODO: 2. Для каждого из объектов - рисуем круг на Canvas'e
-            // Не забудьте, что нужно применить translateX и translateY,
-            // чтобы "маска" четко легла на лицо
+            faceContour.forEach { point ->
+                canvas.drawCircle(point.x.translateX(), point.y.translateY(), dotSize, dotPaintCircle)
+            }
 
-
-
-//            TODO: раскомментировать, как только создадите объект paintBox
-//            canvas.drawRect(rect, paintBox)
+            canvas.drawRect(rect, rectanglePaintBox)
         }
     }
 
