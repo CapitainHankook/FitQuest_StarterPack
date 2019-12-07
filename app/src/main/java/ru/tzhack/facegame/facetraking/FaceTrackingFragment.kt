@@ -44,13 +44,13 @@ class FaceTrackingFragment : Fragment() {
     private var correctEmojiCount: Int = 0;
 
     private val emojiList = listOf(
-//        FaceEmoji.DOUBLE_EYE_CLOSE,✓
-//        FaceEmoji.LEFT_EYE_CLOSE,✓
-//        FaceEmoji.RIGHT_EYE_CLOSE,✓
+        FaceEmoji.DOUBLE_EYE_CLOSE,
+        FaceEmoji.LEFT_EYE_CLOSE,
+        FaceEmoji.RIGHT_EYE_CLOSE,
 
         FaceEmoji.DOUBLE_EYEBROWN_MOVE,
 
-//        FaceEmoji.SMILE,
+        FaceEmoji.SMILE,
         FaceEmoji.MOUTH_OPEN,
 
         FaceEmoji.HEAD_BIAS_LEFT,
