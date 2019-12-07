@@ -26,13 +26,17 @@ class GameToolbar(context: Context, widthScreen : Float) {
 
     private val imageShots =  context.createBitmap(R.drawable.bonus_shot, sideSprite, sideSprite)
 
-    private var time = 60f
+    private var time = 120f
 
     private val startPositionTime = widthScreen.toFloat() - 285f
 
     private val startPositionShotImg = widthScreen.toFloat() - 140f
 
     private val startPositionCountShot = widthScreen.toFloat() - 45f
+
+    fun getTime() : Float {
+        return time
+    }
 
     companion object {
         private const val yTopIndent = 55f
@@ -57,7 +61,9 @@ class GameToolbar(context: Context, widthScreen : Float) {
     }
 
     private fun timeToText() : String {
-        return "0" + (time.toInt() / 60).toString() + ":" + (time.toInt() % 60).toString()
+        val second = time.toInt() % 60
+        val secondStr : String = if(second < 2) "0" + second.toString() else second.toString()
+        return "0" + (time.toInt() / 60).toString() + ":" + secondStr
     }
 
     fun catchupBonus (){

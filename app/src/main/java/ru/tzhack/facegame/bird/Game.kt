@@ -45,7 +45,7 @@ class Game(
     companion object {
         // выстрел не чаще
         private const val SHOT_DEPOUNCE = 2f
-        private const val COORD_END_GAME = 5000F
+        private const val COORD_END_GAME = 12200F
 
     }
 
@@ -59,7 +59,7 @@ class Game(
     init {
         paint.textSize = 50f
         viewport = Viewport(this, size.x.toFloat(), size.y.toFloat())
-        blocks = Block.generate(context, size.x.toFloat(), 10)
+        blocks = Block.generate(context, size.x.toFloat(), 25)
         //bonus = Bonus.create()
         bullets = arrayListOf<Bullet>()
         gameToolbar = GameToolbar(this.context, size.x.toFloat())
@@ -173,6 +173,11 @@ class Game(
         if (finish.isCollision(bird.position.top)) {
             playing = false
             resultGame(true)
+        }
+
+        if (gameToolbar.getTime() <= 0) {
+            playing = false
+            resultGame(false)
         }
     }
 

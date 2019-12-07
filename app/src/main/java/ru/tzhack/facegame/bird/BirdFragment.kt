@@ -1,7 +1,6 @@
 package ru.tzhack.facegame.bird
 
 import android.app.AlertDialog
-import android.content.DialogInterface
 import android.graphics.Point
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -72,7 +71,7 @@ class BirdFragment : Fragment() {
         } else {
             resultDialog.setTitle("Поражение!")
         }
-        resultDialog.setNeutralButton("На стартовую страницу") { dialog : DialogInterface,  id : Int -> {}}
+        //resultDialog.setNeutralButton("На стартовую страницу") { dialog : DialogInterface,  id : Int -> {}}
         resultDialog.create().show()
     }
 }
