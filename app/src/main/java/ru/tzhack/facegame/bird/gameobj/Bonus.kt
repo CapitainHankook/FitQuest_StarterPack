@@ -27,7 +27,7 @@ enum class BonusType {
  * 4.  Проверка столкновений
  */
 class Bonus(
-    private val position: Position,
+        val position: Position,
     private val speed: Float,
     val type: BonusType
 

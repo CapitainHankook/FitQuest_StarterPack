@@ -14,7 +14,7 @@ import ru.tzhack.facegame.bird.utils.createBitmap
  * 1. [draw]
  */
 class Finish(
-    private var positionY: Float,
+        var positionY: Float,
     private val width: Float,
     context: Context
 ) {

@@ -103,8 +103,8 @@ class Game(
     fun action(action: FaceEmoji) {
         when (action) {
             FaceEmoji.SMILE -> onSmile()
-            FaceEmoji.HEAD_ROTATE_LEFT -> onHeadRotateLeft()
-            FaceEmoji.HEAD_ROTATE_RIGHT -> onHeadRotateRight()
+            FaceEmoji.HEAD_ROTATE_LEFT -> onHeadRotateLeft(0f)
+            FaceEmoji.HEAD_ROTATE_RIGHT -> onHeadRotateRight(0f)
         }
     }
 
@@ -120,12 +120,12 @@ class Game(
     }
 
     @Synchronized
-    private fun onHeadRotateLeft() {
+    public fun onHeadRotateLeft(koef: Float) {
         bird.Left()
     }
 
     @Synchronized
-    private fun onHeadRotateRight() {
+    public fun onHeadRotateRight(koef: Float) {
         bird.Right()
     }
 
@@ -254,23 +254,27 @@ class Game(
                 canvas.drawColor(backgroundColor)
 
                 for (block in blocks) {
-                    block.draw(canvas, paint, viewport)
+                    if (viewport.isVisible(block.position))
+                         block.draw(canvas, paint, viewport)
                 }
 
                 for (bullet in bullets) {
-                    bullet.draw(canvas, paint, viewport)
+                    if (viewport.isVisible(bullet.position))
+                        bullet.draw(canvas, paint, viewport)
                 }
 
-                for (block in blocks)
-                {
-                    block.draw(canvas,paint,viewport)
+                for (block in blocks) {
+                    if (viewport.isVisible(block.position))
+                        block.draw(canvas,paint,viewport)
                 }
+
                 for (bonus in bonuses) {
-
+                    if (viewport.isVisible(bonus.position))
                     bonus.draw(canvas, paint, viewport, context)
                 }
+                if (viewport.isVisible(finish.positionY))
+                    finish.draw(canvas, paint, viewport)
 
-                finish.draw(canvas, paint, viewport)
                 gameToolbar.draw(canvas, paint)
                 bird.draw(canvas, paint, viewport)
 
@@ -288,9 +292,9 @@ class Game(
                 if (size.y / 2 > Y) {
                     onSmile()
                 } else if ((bird.position.left >= X))
-                    onHeadRotateLeft()
+                    onHeadRotateLeft(0f)
                 else
-                    onHeadRotateRight()
+                    onHeadRotateRight(0f)
 
 
             } else {
