@@ -27,7 +27,7 @@ object MlKitEngine {
     private var analyzing = AtomicBoolean(false)
 
     fun initMlKit() {
-        throw Exception("Упс! Кто-то сломал метод: 'initMlKit'")
+//        throw Exception("Упс! Кто-то сломал метод: 'initMlKit'")
 
         val options = FirebaseVisionFaceDetectorOptions.Builder()
                 //TODO: Нам нужна быстрота + все контуры лица + все классификации...

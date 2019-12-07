@@ -11,11 +11,22 @@ class SpriteAnimation(
     private val frames: Array<Bitmap>,
     val cycleSec: Float
 ) {
-    var Cur: Int=1;
+    var Cur: Int=0;
+    var CurSec: Float=0F;
+
     //TODO: Реализовать метод: 1. Переключение фрейма 2. Получение текущего
+
+
     // переключение фрейма
     fun update(dt: Float) {
-        Cur=(dt.rem(cycleSec)).toInt()
+        if (dt.div(cycleSec)-CurSec>cycleSec)
+        {
+            CurSec=dt;
+            Cur++;
+            if (Cur>=8)
+                Cur=0;
+        }
+
     }
 
     fun getCurrent():Bitmap{

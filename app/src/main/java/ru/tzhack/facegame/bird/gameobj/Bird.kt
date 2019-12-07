@@ -9,6 +9,7 @@ import ru.tzhack.facegame.bird.Viewport
 import ru.tzhack.facegame.bird.utils.Position
 import ru.tzhack.facegame.bird.utils.SpriteAnimation
 import ru.tzhack.facegame.bird.utils.createBitmap
+import ru.tzhack.facegame.bird.utils.createBitmaps
 
 /**
  * Реализовать методы
@@ -36,18 +37,15 @@ class Bird(
         private const val MAX_SPEED_HORIZONTAL = 500
     }
 
-    val bitmap = context.createBitmap(R.drawable.a1, WIDTH_SPRITE, HEIGHT_SPRITE);
-    val frames= Array<Bitmap>(8, {context.createBitmap(R.drawable.a1, WIDTH_SPRITE, HEIGHT_SPRITE);
-        context.createBitmap(R.drawable.a2, WIDTH_SPRITE, HEIGHT_SPRITE);
-        context.createBitmap(R.drawable.a3, WIDTH_SPRITE, HEIGHT_SPRITE);
-        context.createBitmap(R.drawable.a4, WIDTH_SPRITE, HEIGHT_SPRITE);
-        context.createBitmap(R.drawable.a5, WIDTH_SPRITE, HEIGHT_SPRITE);
-        context.createBitmap(R.drawable.a6, WIDTH_SPRITE, HEIGHT_SPRITE);
-        context.createBitmap(R.drawable.a7, WIDTH_SPRITE, HEIGHT_SPRITE);
-        context.createBitmap(R.drawable.a8, WIDTH_SPRITE, HEIGHT_SPRITE);});
-    val position=Position((screenX/2)- (WIDTH_SPRITE/2), 15F, WIDTH_SPRITE, HEIGHT_SPRITE);
-    //val sprAni=SpriteAnimation(frames,8)
-    //var poscenter=Float;
+    val position=Position((screenX/2)- (WIDTH_SPRITE/2), 0F, WIDTH_SPRITE, HEIGHT_SPRITE);
+    val sprAni=SpriteAnimation(context.createBitmaps(WIDTH_SPRITE, HEIGHT_SPRITE,
+            R.drawable.a1, R.drawable.a2, R.drawable.a3, R.drawable.a4,
+            R.drawable.a5, R.drawable.a6, R.drawable.a7, R.drawable.a8),0.1.toFloat())
+    enum class Napr {
+        LEFT, JUST, RIGTH
+    }
+    var napr: Napr=Napr.JUST;
+
 
     /**  обновление игрового состояния
      * 1. Постоянное смещение объекта вверх
@@ -60,17 +58,25 @@ class Bird(
     fun update(dt: Float) {
         //шагвверх
         position.top+= dt* SPEED_VERTICAL_DEFAULT;
-
-
-
+        sprAni.update(dt);
+        if (napr==Napr.LEFT&&position.left>0)
+            position.left-=dt* MAX_SPEED_HORIZONTAL;
+        if (napr==Napr.RIGTH&&position.left<screenX-WIDTH_SPRITE)
+           position.left+=dt* MAX_SPEED_HORIZONTAL;
 
     }
 
-    fun Offset(ofst:Float)
+    fun Left()
     {
-        if (ofst>screenX)
-            position.left=ofst;
-        else position.left=ofst;
+        napr=Napr.LEFT
+    }
+    fun Right()
+    {
+        napr=Napr.RIGTH
+    }
+    fun Just()
+    {
+        napr=Napr.JUST
     }
 
     /**
@@ -78,7 +84,7 @@ class Bird(
      */
     fun draw(canvas: Canvas, paint: Paint, viewport: Viewport) {
 
-        canvas.drawBitmap(bitmap, position.left, viewport.convertToDisplay(position), paint);
+        canvas.drawBitmap(sprAni.getCurrent(), position.left, viewport.convertToDisplay(position), paint);
 
     }
 
