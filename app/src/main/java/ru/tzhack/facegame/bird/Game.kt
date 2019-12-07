@@ -37,7 +37,6 @@ class Game(
     private var canvas: Canvas = Canvas()
     private val paint: Paint = Paint()
     var bird: Bird = Bird(context, (size.x).toFloat());
-    var viewport: Viewport= Viewport(15F);
 
     companion object {
         // выстрел не чаще
@@ -114,6 +113,7 @@ class Game(
      */
     private fun update(dt: Float) {
         finish.update()
+        bird.update(dt)
     }
 
     /**

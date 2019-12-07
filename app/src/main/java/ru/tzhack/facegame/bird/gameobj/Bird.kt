@@ -78,7 +78,7 @@ class Bird(
      */
     fun draw(canvas: Canvas, paint: Paint, viewport: Viewport) {
 
-        canvas.drawBitmap(bitmap, position.left, position.top, paint);
+        canvas.drawBitmap(bitmap, position.left, viewport.convertToDisplay(position), paint);
 
     }
 
