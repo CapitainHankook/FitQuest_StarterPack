@@ -11,7 +11,6 @@ import android.view.SurfaceView
 import androidx.core.content.ContextCompat
 import ru.tzhack.facegame.R
 import ru.tzhack.facegame.bird.gameobj.*
-import ru.tzhack.facegame.bird.utils.Position
 import ru.tzhack.facegame.data.model.FaceEmoji
 
 
@@ -30,13 +29,13 @@ class Game(
         context: Context,
         private val size: Point,
         private val resultGame: (Boolean) -> Unit
-        ) : SurfaceView(context),
-    Runnable {
+) : SurfaceView(context),
+        Runnable {
 
     private var playing = false
     var pause = true
     private var thread: Thread? = null
-    private val viewport : Viewport
+    private val viewport: Viewport
 
     private var canvas: Canvas = Canvas()
     private val paint: Paint = Paint()
@@ -45,21 +44,22 @@ class Game(
 
     companion object {
         // выстрел не чаще
-        private const val SHOT_DEPOUNCE = 2000
+        private const val SHOT_DEPOUNCE = 5f
         private const val COORD_END_GAME = 5000F
 
     }
+
     private val bird: Bird = Bird(context, (size.x).toFloat())
-    private var blocks : ArrayList<Block>
+    private var blocks: ArrayList<Block>
     //val bonus : Bonus
-    private var bullets : ArrayList<Bullet>
+    private var bullets: ArrayList<Bullet>
     private val finish: Finish
     private val gameToolbar: GameToolbar
 
     init {
         paint.textSize = 50f
-        viewport =  Viewport(this, size.x.toFloat(), size.y.toFloat())
-        blocks = Block.generate(context, size.x.toFloat(),5)
+        viewport = Viewport(this, size.x.toFloat(), size.y.toFloat())
+        blocks = Block.generate(context, size.x.toFloat(), 15)
         //bonus = Bonus.create()
         bullets = arrayListOf<Bullet>()
         gameToolbar = GameToolbar(this.context, size.x.toFloat())
@@ -106,7 +106,7 @@ class Game(
         }
     }
 
-    fun action (action : FaceEmoji) {
+    fun action(action: FaceEmoji) {
         when (action) {
             FaceEmoji.SMILE -> onSmile()
             FaceEmoji.HEAD_ROTATE_LEFT -> onHeadRotateLeft()
@@ -114,20 +114,17 @@ class Game(
         }
     }
 
-    @Synchronized
-    private fun  onSmile() {
+    private fun onSmile() {
         if (timeWidhoutShot >= SHOT_DEPOUNCE) {
             bullets.add(Bullet.create(context, bird.position))
             timeWidhoutShot = 0f
         }
     }
 
-    @Synchronized
     private fun onHeadRotateLeft() {
         bird.Left()
     }
 
-    @Synchronized
     private fun onHeadRotateRight() {
         bird.Right()
     }
@@ -142,7 +139,6 @@ class Game(
      *
      *  @param dt - прошло секунт после обработки кадра
      */
-    @Synchronized
     private fun update(dt: Float) {
         timeWidhoutShot += dt
 
@@ -156,20 +152,8 @@ class Game(
                 bullet.update(dt)
             }
         }
-        var found: Boolean=false
-        for( block in blocks)
-        {
-            if(block.checkOnCollision(bird.position))
-            {
-                bird.Stop()
-                found=true
-            }
-        }
-        if (!found)
-            bird.MoveAgain()
 
         bullets = stayBullet
-
         for (bullet in bullets) {
             val block = findCollisionBlock(bullet)
             if (block !== null) {
@@ -178,20 +162,28 @@ class Game(
             }
         }
 
-        if (finish.isCollision(bird.position.top) ) {
+        if (finish.isCollision(bird.position.top)) {
             playing = false
             resultGame(true)
         }
     }
 
-    private fun findCollisionBlock(bullet : Bullet) : Block? {
+    private fun findCollisionBlock(bullet: Bullet): Block? {
         for (block in blocks) {
             if (block.checkOnCollision(bullet.position)) return block
 
         }
 
         return null
-
+        var found: Boolean = false
+        for (block in blocks) {
+            if (block.checkOnCollision(bird.position)) {
+                bird.Stop()
+                found = true
+            }
+        }
+        if (!found)
+            bird.MoveAgain()
     }
 
 
@@ -210,30 +202,33 @@ class Game(
                     block.draw(canvas, paint, viewport)
                 }
 
+                for (bullet in bullets) {
+                    bullet.draw(canvas, paint, viewport)
+                }
+
                 finish.draw(canvas, paint, viewport)
                 gameToolbar.draw(canvas, paint)
                 bird.draw(canvas, paint, viewport)
 
-
-                for( block in blocks)
-                {
-                    block.draw(canvas,paint,viewport)
-                }
                 holder.unlockCanvasAndPost(canvas)
             }
         }
     }
 
     override fun onTouchEvent(event: MotionEvent?): Boolean {
-        event?.let { e->
-            var X:Float= e.getX() ?: 0F;
-            var Y:Float=e.getY() ?: 0F;
+        event?.let { e ->
+            var X: Float = e.getX() ?: 0F
+            var Y: Float = e.getY() ?: 0F
 
-            if (e.actionMasked==MotionEvent.ACTION_DOWN) {
-                if ((bird.position.left>=X))
-                    bird.Left();
+            if (e.actionMasked == MotionEvent.ACTION_DOWN) {
+                if ((bird.position.left >= X))
+                    onHeadRotateLeft()
                 else
-                    bird.Right();
+                    onHeadRotateRight()
+
+                if (size.y / 2 > Y) {
+                    onSmile()
+                }
             } else {
                 bird.Just()
             }

@@ -52,40 +52,39 @@ class Block(
             val blocks = ArrayList<Block>()
             var nextY = startY;
             var counter = 0;
-            while(counter<25)
-            {
+            while (counter < count) {
 
-                    var width0 = minWidth + (0..rangeRandomWidth).random();
-                    var width1 = screenX - spaceSize - width0;
-                    val positionLeft = Position(0.toFloat(), nextY, width0, HEIGHT_SPRITE);
-                    val positionRight = Position(positionLeft.right+ spaceSize, nextY, width1, HEIGHT_SPRITE);
+                var width0 = minWidth + (0..rangeRandomWidth).random();
+                var width1 = screenX - spaceSize - width0;
+                val positionLeft = Position(0.toFloat(), nextY, width0, HEIGHT_SPRITE);
+                val positionRight = Position(positionLeft.right + spaceSize, nextY, width1, HEIGHT_SPRITE);
 
-                    blocks += Block(context, positionLeft)
-                    blocks += Block(context, positionRight)
+                blocks += Block(context, positionLeft)
+                blocks += Block(context, positionRight)
 
                 counter++;
-                nextY+= wallsSpacing;
+                nextY += wallsSpacing;
 
             }
 
             return blocks
         }
     }
-    fun checkOnCollision(bird_position: Position):Boolean {
+
+    fun checkOnCollision(bird_position: Position): Boolean {
         return position.contains(bird_position)
     }
+
     /**
      * 1. Отрисовка
      * 2. Проверить находится ли объект на экране в данный момент
      */
     fun draw(canvas: Canvas, paint: Paint, viewport: Viewport) {
         val positionTop = viewport.convertToDisplay(position.top);
-        if(position.left==0.toFloat())
-        {
+        if (position.left == 0.toFloat()) {
             val positionLeft = position.left - WIDTH_SPRITE + position.width;
             canvas.drawBitmap(bitmap, positionLeft, positionTop, paint);
-        }
-        else
-        canvas.drawBitmap(bitmap, position.left, positionTop, paint);
+        } else
+            canvas.drawBitmap(bitmap, position.left, positionTop, paint);
     }
 }

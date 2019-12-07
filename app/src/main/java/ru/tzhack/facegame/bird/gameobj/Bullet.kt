@@ -25,7 +25,7 @@ class Bullet(
 
     private val image = context.createBitmap(R.drawable.bullet_flies, widthFly, heightFly)
 
-    private val imageCrash = context.createBitmap(R.drawable.bullet_flies, sideCrashed, sideCrashed)
+    private val imageCrash = context.createBitmap(R.drawable.bullet_crashed, sideCrashed, sideCrashed)
 
     var destroyed = false
 
@@ -46,13 +46,13 @@ class Bullet(
 
         // характеристики объекта
         private const val SPEED = 600
-        private const val MAX_DISTANCE = 600
+        private const val MAX_DISTANCE = 600f
 
         /**
          *  Создание объекта
          */
         fun create(context: Context, birdPosition: Position): Bullet {
-            return Bullet(context ,birdPosition)
+            return Bullet(context , birdPosition.copy())
 
         }
     }
@@ -63,9 +63,9 @@ class Bullet(
     fun update(dt: Float) : Unit {
         if (destroyed) return
 
-        if (current_distance > 0) {
+        if (current_distance > 0 && !explosioned) {
             position.top += dt * SPEED
-            current_distance -= (dt * SPEED).toInt()
+            current_distance -= dt * SPEED
             if (current_distance <= 0) explosioned = true
 
         } else if (explosioned && time_crashed > 0) {
@@ -81,8 +81,8 @@ class Bullet(
      * 1. Отрисовка
      */
     fun draw(canvas: Canvas, paint: Paint, viewport: Viewport) {
-        if (explosioned) canvas.drawBitmap(image, position.left, viewport.convertToDisplay(position), paint)
-        else canvas.drawBitmap(imageCrash, position.left, viewport.convertToDisplay(position), paint)
+        if (explosioned) canvas.drawBitmap(imageCrash, position.left, viewport.convertToDisplay(position), paint)
+        else canvas.drawBitmap(image, position.left, viewport.convertToDisplay(position), paint)
 
     }
 }
