@@ -2,6 +2,7 @@ package ru.tzhack.facegame.facetraking.mlkit
 
 import com.google.firebase.ml.vision.FirebaseVision
 import com.google.firebase.ml.vision.face.FirebaseVisionFace
+import com.google.firebase.ml.vision.face.FirebaseVisionFaceContour
 import com.google.firebase.ml.vision.face.FirebaseVisionFaceDetector
 import com.google.firebase.ml.vision.face.FirebaseVisionFaceDetectorOptions
 import com.otaliastudios.cameraview.frame.Frame
@@ -30,6 +31,7 @@ object MlKitEngine {
 //        throw Exception("Упс! Кто-то сломал метод: 'initMlKit'")
 
         val options = FirebaseVisionFaceDetectorOptions.Builder()
+                .setContourMode(FirebaseVisionFaceDetectorOptions.ALL_CONTOURS)
                 //TODO: Нам нужна быстрота + все контуры лица + все классификации...
                 .build()
 
@@ -46,6 +48,18 @@ object MlKitEngine {
         val frameSize = frame.size
         getFaceDetector().detectInImage(frame.getVisionImageFromFrame())
                 .addOnSuccessListener { faces ->
+                    if(faces.isNotEmpty())
+                    {
+                        val face = faces[0]
+
+                        if (face.getContour(FirebaseVisionFaceContour.ALL_POINTS).points.isNotEmpty()) {
+                            if (currentEmoji == null) listenerHero?.let { calculateHeroActions(face, it) }
+                            else listenerEmoji?.let { calculateEmojiActions(face, currentEmoji, it) }
+
+                            //Debug Info
+                            debugListener?.onDebugInfo(frameSize, face)
+                        }
+                    }
                     /*TODO: Настраиваем.
                     *  1. Добавляем проверку, что faces - не пустые
                     *  2. Работаем только с одним лицом. В переменную face сохраните найденное лицо.

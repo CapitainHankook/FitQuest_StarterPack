@@ -9,6 +9,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import com.google.firebase.ml.vision.face.FirebaseVisionFace
+import com.google.firebase.ml.vision.face.FirebaseVisionFaceContour
 import com.otaliastudios.cameraview.size.Size
 import ru.tzhack.facegame.R
 import ru.tzhack.facegame.data.model.FaceEmoji
@@ -102,7 +103,7 @@ class FaceTrackingFragment : Fragment() {
                     }
                     first = false
                 }
-
+                
                 MlKitEngine.extractDataFromFrame(
                     frame = frame,
                     currentEmoji = currentEmoji,
@@ -180,11 +181,11 @@ class FaceTrackingFragment : Fragment() {
     private fun printContourOnFace(frameSize: Size, face: FirebaseVisionFace) {
         val invertFrameSize = Size(frameSize.height, frameSize.width)
 //TODO: как только наладишь разметку, разблокируй это и получишь контур лица
-//        binding.faceOverlayView.updateContour(
-//            invertFrameSize,
-//            face.boundingBox,
-//            face.getContour(FirebaseVisionFaceContour.ALL_POINTS).points
-//        )
+        binding.faceOverlayView.updateContour(
+            invertFrameSize,
+            face.boundingBox,
+            face.getContour(FirebaseVisionFaceContour.ALL_POINTS).points
+        )
     }
 
     private fun isEndGame() = false//TODO: correctEmojiCount == emojiForWin
