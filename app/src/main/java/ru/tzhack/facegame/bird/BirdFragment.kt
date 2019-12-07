@@ -1,5 +1,7 @@
 package ru.tzhack.facegame.bird
 
+import android.app.AlertDialog
+import android.content.DialogInterface
 import android.graphics.Point
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -8,7 +10,6 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import kotlinx.android.synthetic.main.fragment_bird.*
 import ru.tzhack.facegame.R
-import ru.tzhack.facegame.bird.gameobj.Block
 
 interface BirdGameControlListener {
     fun onBirdGameOver()
@@ -42,13 +43,9 @@ class BirdFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-
         val size = Point()
         requireActivity().windowManager.defaultDisplay.getSize(size)
-
-
-
-        game = Game(requireContext(), size)
+        game = Game(requireContext(), size, this::onEndGame)
         game_container.addView(game)
     }
 
@@ -66,5 +63,16 @@ class BirdFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         game = null
+    }
+
+    private fun onEndGame(isWon : Boolean) : Unit{
+        val resultDialog = AlertDialog.Builder(this.context)
+        if (isWon) {
+            resultDialog.setTitle("Победа!")
+        } else {
+            resultDialog.setTitle("Поражение!")
+        }
+        resultDialog.setNeutralButton("На стартовую страницу") { dialog : DialogInterface,  id : Int -> {}}
+        resultDialog.create().show()
     }
 }

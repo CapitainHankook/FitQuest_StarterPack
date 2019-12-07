@@ -11,7 +11,7 @@ import ru.tzhack.facegame.bird.utils.Position
  *  3. Проверка попадает ли игровой объект в область дисплея
  */
 class Viewport(private val game : Game, private val screenWidth : Float, private val screenHeight: Float) {
-    public var y : Float = 0f
+    private var y : Float = 0f
 
     companion object {
         // отступ снизу при центрировании на игровом объекта
@@ -22,8 +22,8 @@ class Viewport(private val game : Game, private val screenWidth : Float, private
         return y - position.top
     }
 
-    fun convertToDisplay (yPosition:  Float) : Float {
-        return y - yPosition
+    fun convertToDisplay (y:  Float) : Float {
+        return this.y - y
     }
 
 
@@ -31,7 +31,7 @@ class Viewport(private val game : Game, private val screenWidth : Float, private
         y = birdPosition.top + screenHeight - BOTTOM_PADDING
     }
 
-    /*fun isVisible (position: Position) : Boolean {
-
-    }*/
+    fun isVisible (position: Position) : Boolean {
+        return position.top >= y - screenHeight || position.top <= y + screenHeight
+    }
 }

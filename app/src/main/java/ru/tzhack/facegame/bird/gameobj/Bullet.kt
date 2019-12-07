@@ -1,10 +1,13 @@
 package ru.tzhack.facegame.bird.gameobj
 
+import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Paint
+import ru.tzhack.facegame.R
 import ru.tzhack.facegame.bird.Viewport
 import ru.tzhack.facegame.bird.gameobj.Bullet.Companion.create
 import ru.tzhack.facegame.bird.utils.Position
+import ru.tzhack.facegame.bird.utils.createBitmap
 
 /**
  *  Выстрел
@@ -15,7 +18,22 @@ import ru.tzhack.facegame.bird.utils.Position
  * 4. [update]
  * 5. Утилизация объекта после перемещения на максимальную дистанцию
  */
-class Bullet() {
+class Bullet(
+        context: Context,
+        val position: Position
+) {
+
+    private val image = context.createBitmap(R.drawable.bullet_flies, widthFly, heightFly)
+
+    private val imageCrash = context.createBitmap(R.drawable.bullet_flies, sideCrashed, sideCrashed)
+
+    var destroyed = false
+
+    var explosioned = false
+
+    private var current_distance = MAX_DISTANCE
+
+    private var time_crashed = CRASHED_VISIBLE_MAX_TIME
 
     companion object {
 
@@ -33,15 +51,29 @@ class Bullet() {
         /**
          *  Создание объекта
          */
-        fun create(birdPosition: Position): Bullet {
-            TODO()
+        fun create(context: Context, birdPosition: Position): Bullet {
+            return Bullet(context ,birdPosition)
+
         }
     }
 
     /**
      *  Смещение позиции если ещё нет столкновения
      */
-    fun update(dt: Float) {
+    fun update(dt: Float) : Unit {
+        if (destroyed) return
+
+        if (current_distance > 0) {
+            position.top += dt * SPEED
+            current_distance -= (dt * SPEED).toInt()
+            if (current_distance <= 0) explosioned = true
+
+        } else if (explosioned && time_crashed > 0) {
+            time_crashed -= dt
+
+        } else {
+            destroyed = true
+        }
 
     }
 
@@ -49,6 +81,8 @@ class Bullet() {
      * 1. Отрисовка
      */
     fun draw(canvas: Canvas, paint: Paint, viewport: Viewport) {
+        if (explosioned) canvas.drawBitmap(image, position.left, viewport.convertToDisplay(position), paint)
+        else canvas.drawBitmap(imageCrash, position.left, viewport.convertToDisplay(position), paint)
 
     }
 }

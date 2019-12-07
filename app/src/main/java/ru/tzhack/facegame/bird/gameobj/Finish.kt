@@ -40,7 +40,8 @@ class Finish(
 
     }
 
-    fun update() {
-        positionY++
+    fun isCollision(y : Float) : Boolean {
+        return positionY <= y
     }
+
 }

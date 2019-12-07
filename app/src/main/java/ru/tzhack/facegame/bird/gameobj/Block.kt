@@ -48,7 +48,7 @@ class Block(
         /**
          *  Генерация блоков
          */
-        fun generate(context: Context, screenX: Float, count: Int): List<Block> {
+        fun generate(context: Context, screenX: Float, count: Int): ArrayList<Block> {
             val blocks = ArrayList<Block>()
             var nextY = startY;
             var counter = 0;
@@ -71,8 +71,7 @@ class Block(
             return blocks
         }
     }
-    fun checkOnCollision(bird_position: Position):Boolean
-    {
+    fun checkOnCollision(bird_position: Position):Boolean {
         return position.contains(bird_position)
     }
     /**

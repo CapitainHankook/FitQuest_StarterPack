@@ -1,14 +1,12 @@
 package ru.tzhack.facegame.bird.gameobj
 
 import android.content.Context
-import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Paint
 import ru.tzhack.facegame.R
 import ru.tzhack.facegame.bird.Viewport
 import ru.tzhack.facegame.bird.utils.Position
 import ru.tzhack.facegame.bird.utils.SpriteAnimation
-import ru.tzhack.facegame.bird.utils.createBitmap
 import ru.tzhack.facegame.bird.utils.createBitmaps
 
 /**
@@ -111,9 +109,7 @@ class Bird(
      * отрисовка текущего фрейма
      */
     fun draw(canvas: Canvas, paint: Paint, viewport: Viewport) {
-
-        canvas.drawBitmap(sprAni.getCurrent(), position.left, viewport.convertToDisplay(position), paint);
-
+        canvas.drawBitmap(sprAni.getCurrent(), position.left, viewport.convertToDisplay(position), paint)
     }
 
 }

@@ -6,13 +6,11 @@ import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.Point
 import android.os.SystemClock
-import android.view.KeyEvent
-import android.view.MotionEvent
 import android.view.SurfaceView
 import androidx.core.content.ContextCompat
-import kotlinx.android.synthetic.main.fragment_bird.view.*
 import ru.tzhack.facegame.R
 import ru.tzhack.facegame.bird.gameobj.*
+import ru.tzhack.facegame.data.model.FaceEmoji
 
 
 /**
@@ -28,7 +26,8 @@ import ru.tzhack.facegame.bird.gameobj.*
 @SuppressLint("ViewConstructor")
 class Game(
         context: Context,
-        private val size: Point
+        private val size: Point,
+        private val resultGame: (Boolean) -> Unit
         ) : SurfaceView(context),
     Runnable {
 
@@ -39,29 +38,30 @@ class Game(
 
     private var canvas: Canvas = Canvas()
     private val paint: Paint = Paint()
-    var bird: Bird = Bird(context, (size.x).toFloat());
+
+    private var timeWidhoutShot = 0f
 
     companion object {
         // выстрел не чаще
         private const val SHOT_DEPOUNCE = 2000
+        private const val COORD_END_GAME = 5000F
 
     }
-
-    //val bird : Bird
-    val blocks : List<Block>
-    val bonuses : List<Bonus>
-    val bullets : List<Bullet>
-    val finish: Finish
-    val gameToolbar: GameToolbar
+    private val bird: Bird = Bird(context, (size.x).toFloat())
+    private var blocks : ArrayList<Block>
+    //val bonus : Bonus
+    private var bullets : ArrayList<Bullet>
+    private val finish: Finish
+    private val gameToolbar: GameToolbar
 
     init {
+        paint.textSize = 50f
         viewport =  Viewport(this, size.x.toFloat(), size.y.toFloat())
-        blocks = Block.generate(context, (size.x).toFloat(),0)
-        bonuses = arrayListOf<Bonus>()
+        blocks = Block.generate(context, size.x.toFloat(),5)
+        //bonus = Bonus.create()
         bullets = arrayListOf<Bullet>()
-        gameToolbar = GameToolbar(this.context)
-        finish = Finish(500f, 1000f, this.context)
-        viewport.y = 1000f
+        gameToolbar = GameToolbar(this.context, size.x.toFloat())
+        finish = Finish(COORD_END_GAME, size.x.toFloat(), this.context)
     }
 
     private val backgroundColor = ContextCompat.getColor(context, R.color.colorPrimaryDark)
@@ -104,6 +104,32 @@ class Game(
         }
     }
 
+    fun action (action : FaceEmoji) {
+        when (action) {
+            FaceEmoji.SMILE -> onSmile()
+            FaceEmoji.HEAD_ROTATE_LEFT -> onHeadRotateLeft()
+            FaceEmoji.HEAD_ROTATE_RIGHT -> onHeadRotateRight()
+        }
+    }
+
+    @Synchronized
+    private fun  onSmile() {
+        if (timeWidhoutShot >= SHOT_DEPOUNCE) {
+            bullets.add(Bullet.create(context, bird.position))
+            timeWidhoutShot = 0f
+        }
+    }
+
+    @Synchronized
+    private fun onHeadRotateLeft() {
+        bird.Left()
+    }
+
+    @Synchronized
+    private fun onHeadRotateRight() {
+        bird.Right()
+    }
+
     /**
      *  Обновление состояния игры
      *
@@ -114,10 +140,43 @@ class Game(
      *
      *  @param dt - прошло секунт после обработки кадра
      */
+    @Synchronized
     private fun update(dt: Float) {
-        finish.update()
+        timeWidhoutShot += dt
+
         bird.update(dt)
+        gameToolbar.update(dt)
         viewport.centreCamera(bird.position)
+        val stayBullet = arrayListOf<Bullet>()
+        for (bullet in bullets) {
+            if (!bullet.destroyed) {
+                stayBullet.add(bullet)
+                bullet.update(dt)
+            }
+        }
+        bullets = stayBullet
+
+        for (bullet in bullets) {
+            val block = findCollisionBlock(bullet)
+            if (block !== null) {
+                blocks.remove(block)
+                bullet.explosioned = true
+            }
+        }
+
+        if (finish.isCollision(bird.position.top) ) {
+            playing = false
+            resultGame(true)
+        }
+    }
+
+    private fun findCollisionBlock(bullet : Bullet) : Block? {
+        for (block in blocks) {
+            if (block.checkOnCollision(bullet.position)) return block
+
+        }
+
+        return null
         var found: Boolean=false
         for( block in blocks)
         {
@@ -143,7 +202,12 @@ class Game(
 
                 canvas.drawColor(backgroundColor)
 
+                for (block in blocks) {
+                    block.draw(canvas, paint, viewport)
+                }
+
                 finish.draw(canvas, paint, viewport)
+                gameToolbar.draw(canvas, paint)
                 bird.draw(canvas, paint, viewport)
 
 
