@@ -3,8 +3,11 @@ package ru.tzhack.facegame.bird.gameobj
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Paint
+import ru.tzhack.facegame.R
 import ru.tzhack.facegame.bird.Viewport
 import ru.tzhack.facegame.bird.gameobj.Block.Companion.generate
+import ru.tzhack.facegame.bird.utils.Position
+import ru.tzhack.facegame.bird.utils.createBitmap
 
 /**
  * Препядствие
@@ -14,7 +17,13 @@ import ru.tzhack.facegame.bird.gameobj.Block.Companion.generate
  * 2. [draw]
  * 3. Проверка столкновений
  */
-class Block() {
+class Block(
+        context: Context,
+        val position: Position
+) {
+
+    val bitmap = context.createBitmap(R.drawable.pad1, WIDTH_SPRITE, HEIGHT_SPRITE);
+
 
     companion object {
         // размер спрайта
@@ -40,17 +49,44 @@ class Block() {
          *  Генерация блоков
          */
         fun generate(context: Context, screenX: Float, count: Int): List<Block> {
-            val walls = ArrayList<Block>()
+            val blocks = ArrayList<Block>()
+            var nextY = startY;
+            var counter = 0;
+            while(counter<25)
+            {
 
-            return walls
+                    var width0 = minWidth + (0..rangeRandomWidth).random();
+                    var width1 = screenX - spaceSize - width0;
+                    val positionLeft = Position(0.toFloat(), nextY, width0, HEIGHT_SPRITE);
+                    val positionRight = Position(positionLeft.right+ spaceSize, nextY, width1, HEIGHT_SPRITE);
+
+                    blocks += Block(context, positionLeft)
+                    blocks += Block(context, positionRight)
+
+                counter++;
+                nextY+= wallsSpacing;
+
+            }
+
+            return blocks
         }
     }
-
+    fun checkOnCollision(bird_position: Position):Boolean
+    {
+        return position.contains(bird_position)
+    }
     /**
      * 1. Отрисовка
      * 2. Проверить находится ли объект на экране в данный момент
      */
     fun draw(canvas: Canvas, paint: Paint, viewport: Viewport) {
-
+        val positionTop = viewport.convertToDisplay(position.top);
+        if(position.left==0.toFloat())
+        {
+            val positionLeft = position.left - WIDTH_SPRITE + position.width;
+            canvas.drawBitmap(bitmap, positionLeft, positionTop, paint);
+        }
+        else
+        canvas.drawBitmap(bitmap, position.left, positionTop, paint);
     }
 }

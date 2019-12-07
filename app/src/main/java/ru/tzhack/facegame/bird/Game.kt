@@ -8,6 +8,7 @@ import android.graphics.Point
 import android.os.SystemClock
 import android.view.SurfaceView
 import androidx.core.content.ContextCompat
+import kotlinx.android.synthetic.main.fragment_bird.view.*
 import ru.tzhack.facegame.R
 import ru.tzhack.facegame.bird.gameobj.*
 
@@ -53,7 +54,7 @@ class Game(
 
     init {
         viewport =  Viewport(this, size.x.toFloat(), size.y.toFloat())
-        blocks = arrayListOf<Block>()
+        blocks = Block.generate(context, scaleX,0)
         bonuses = arrayListOf<Bonus>()
         bullets = arrayListOf<Bullet>()
         gameToolbar = GameToolbar(this.context)
@@ -131,6 +132,12 @@ class Game(
                 finish.draw(canvas, paint, viewport)
                 bird.draw(canvas, paint, viewport)
 
+
+                for( block in blocks)
+                {
+
+                    block.draw(canvas,paint,viewport)
+                }
                 holder.unlockCanvasAndPost(canvas)
             }
         }
