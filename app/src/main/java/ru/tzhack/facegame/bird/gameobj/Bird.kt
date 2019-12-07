@@ -34,7 +34,9 @@ class Bird(
         private const val BONUS_MAX_TIME = 5
         private const val MAX_SPEED_HORIZONTAL = 500
     }
-
+    var currentspeed: Int=SPEED_VERTICAL_DEFAULT;
+    var currenthorspeed: Int=MAX_SPEED_HORIZONTAL;
+    var curBonusTime: Float=0F;
     val position=Position((screenX/2)-(WIDTH_SPRITE/2), 0F, WIDTH_SPRITE, HEIGHT_SPRITE);
     val sprAni=SpriteAnimation(context.createBitmaps(WIDTH_SPRITE, HEIGHT_SPRITE,
             R.drawable.a1, R.drawable.a2, R.drawable.a3, R.drawable.a4,
@@ -49,6 +51,11 @@ class Bird(
     {
         NOLEFT, NORIGTH, UP
     }
+    enum class Speed
+    {
+        USUAL, FAST, SLOW
+    }
+    var birdspeed: Speed=Speed.USUAL
     var nlf: LfRg=LfRg.UP;
     var move: Boolean =true;
     var napr: Napr=Napr.JUST;
@@ -64,16 +71,19 @@ class Bird(
      * 6. Обработка эффекта от бонуса
      */
     fun update(dt: Float, blocks : ArrayList<Block>) {
-        //шагвверх
+        if (birdspeed!=Speed.USUAL) {
+            SpeedBonusEnd();
+            curBonusTime += dt;
+        }
         if (move)
-            position.top+= dt* SPEED_VERTICAL_DEFAULT;
+            position.top+= dt* currentspeed;
 
         if(!shoot)
         sprAni.update(dt);
         else shootAnimation.update(dt);
 
-        val pos1=Position(position.left-dt* MAX_SPEED_HORIZONTAL, position.top, WIDTH_SPRITE, HEIGHT_SPRITE);
-        val pos2=Position(position.left+dt* MAX_SPEED_HORIZONTAL, position.top, WIDTH_SPRITE, HEIGHT_SPRITE);
+        val pos1=Position(position.left-dt* currenthorspeed, position.top, WIDTH_SPRITE, HEIGHT_SPRITE);
+        val pos2=Position(position.left+dt* currenthorspeed, position.top, WIDTH_SPRITE, HEIGHT_SPRITE);
         for( block in blocks)
         {
             if(block.checkOnCollision(pos1)&&move)
@@ -88,11 +98,34 @@ class Bird(
 
 
         if (napr==Napr.LEFT&&position.left>0&&nlf!=LfRg.NOLEFT)
-            position.left-=dt* MAX_SPEED_HORIZONTAL;
+            position.left-=dt* currenthorspeed;
         if (napr==Napr.RIGTH&&position.left<screenX-WIDTH_SPRITE&&nlf!=LfRg.NORIGTH)
-           position.left+=dt* MAX_SPEED_HORIZONTAL;
+           position.left+=dt* currenthorspeed;
         nlf=LfRg.UP
     }
+    fun SpeedBonusEnd()
+    {
+       if(curBonusTime>= BONUS_MAX_TIME)
+       {
+            birdspeed=Speed.USUAL
+           currentspeed=SPEED_VERTICAL_DEFAULT;
+           currenthorspeed=MAX_SPEED_HORIZONTAL;
+           curBonusTime=0F;
+       }
+    }
+    fun SpeedUp(){
+        curBonusTime=0F;
+        birdspeed=Speed.FAST
+        currentspeed += 200;
+        currenthorspeed+=200;
+    }
+    fun SpeedDown(){
+        curBonusTime=0F;
+        birdspeed=Speed.SLOW
+        currentspeed -= 150;
+        currenthorspeed-=150;
+    }
+
     fun Shoot()
     {
         shoot=true

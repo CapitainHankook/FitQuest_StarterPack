@@ -186,8 +186,8 @@ class Game(
 
             when(catchBonus.type) {
                 BonusType.SHOT -> onBonusShot()
-                BonusType.SPEED_DOWN -> {}
-                BonusType.SPEED_UP -> {}
+                BonusType.SPEED_DOWN ->onBonusSpeedDown()
+                BonusType.SPEED_UP -> onBonusSpeedUp()
                 BonusType.TIME -> onBonusTime()
             }
         }
@@ -222,6 +222,15 @@ class Game(
     private fun onBonusTime() {
         gameToolbar.catchupTimeBonus()
     }
+    private fun onBonusSpeedUp() {
+        //gameToolbar.catchupTimeBonus()
+        bird.SpeedUp()
+    }
+    private fun onBonusSpeedDown() {
+        //gameToolbar.catchupTimeBonus()
+        bird.SpeedDown()
+    }
+
 
 
     private fun findCollisionBlock(bullet: Bullet): Block? {
