@@ -48,7 +48,7 @@ class Game(
     companion object {
         // выстрел не чаще
         private const val SHOT_DEPOUNCE = 2f
-        private const val COORD_END_GAME = 5000F
+        private const val COORD_END_GAME = 7000F
 
     }
 
