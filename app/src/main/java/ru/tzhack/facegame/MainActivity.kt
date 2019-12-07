@@ -66,19 +66,19 @@ class MainActivity : AppCompatActivity(), /*BirdGameControlListener,*/ FaceGameO
     }
 
     private fun showGameFragment() {
+        supportFragmentManager.beginTransaction()
+                .replace(R.id.fragment_container, FaceTrackingFragment.createFragment())
+                .commit()
+
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-//            if (hasCameraPermissions()) {
-                val transaction = supportFragmentManager.beginTransaction()
-                transaction.replace(R.id.fragment_container, FaceTrackingFragment())
-                transaction.commit()
-                println("rrrrrrrrrrrrrrrrrrrrrrrrrrrr")
-//                //TODO: fragmentManager -> replace FaceTrackingFragment
-//            } else {
-//                requestPermissions(arrayOf(Manifest.permission.CAMERA, Manifest.permission.INTERNET), CAMERA_PERMISSION_REQUEST_CODE)
-//                //TODO: запрос разрешения на камеру
-//                //TODO: requestPermissions(...)
-//            }
+            if (hasCameraPermissions()) {
+                //TODO: fragmentManager -> replace FaceTrackingFragment
+
+            } else {
+                //TODO: запрос разрешения на камеру
+                //TODO: requestPermissions(...)
+            }
         } else {
             //TODO: fragmentManager -> replace FaceTrackingFragment
         }

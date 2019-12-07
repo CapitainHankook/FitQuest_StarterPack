@@ -66,6 +66,8 @@ class FaceTrackingFragment : Fragment() {
     private val mlKitEmojiListener = object : MlKitEmojiListener {
         override fun onEmojiObtained(emoji: FaceEmoji) {
             //TODO: если ожидаемая эмоция совпадает с полученной, то вызывай doneEmoji()
+            if(currentEmoji == emoji)
+                doneEmoji()
         }
     }
 
@@ -89,12 +91,14 @@ class FaceTrackingFragment : Fragment() {
 
         var first = true
         //TODO: Разблокируй, как только наладишь разметку :)
+
         binding.positionFace.run {
             setLifecycleOwner(this@FaceTrackingFragment)
             addFrameProcessor { frame ->
 
                 if (first && frame.size.height != 0 && frame.size.width != 0) {
-                    binding.exampleView.run {
+
+                    binding.positionFace.run {
                         layoutParams = layoutParams.apply {
                             width = frame.size.height
                             height = frame.size.width
