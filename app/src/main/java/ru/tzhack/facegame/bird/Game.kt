@@ -9,9 +9,7 @@ import android.os.SystemClock
 import android.view.SurfaceView
 import androidx.core.content.ContextCompat
 import ru.tzhack.facegame.R
-import ru.tzhack.facegame.bird.gameobj.Bird
-import ru.tzhack.facegame.bird.gameobj.Finish
-import ru.tzhack.facegame.bird.gameobj.GameToolbar
+import ru.tzhack.facegame.bird.gameobj.*
 import ru.tzhack.facegame.data.model.FaceEmoji
 
 
@@ -41,11 +39,12 @@ class Game(
     private var canvas: Canvas = Canvas()
     private val paint: Paint = Paint()
     val bird: Bird = Bird(context, (size.x).toFloat())
-
+    val blocks = Block.generate(context, size.x.toFloat(),20)
+    val bonuses = arrayListOf<Bonus>()
     companion object {
         // выстрел не чаще
         private const val SHOT_DEPOUNCE = 2000
-        private const val COORD_END_GAME = 500F
+        private const val COORD_END_GAME = 7000F
 
     }
 
@@ -63,6 +62,7 @@ class Game(
         //bullets = arrayListOf<Bullet>()
         gameToolbar = GameToolbar(this.context, size.x.toFloat())
         finish = Finish(COORD_END_GAME, size.x.toFloat(), this.context)
+        Bonus.init(context)
     }
 
     private val backgroundColor = ContextCompat.getColor(context, R.color.colorPrimaryDark)
@@ -134,11 +134,19 @@ class Game(
         gameToolbar.update(dt)
         viewport.centreCamera(bird.position)
 
+        if(bird.position.top > Bonus.generateWhenPositionY)
+        {
+
+            bonuses+=Bonus.create(bird.position, size.x,size.y)
+        }
         if (finish.isCollision(bird.position.top) ) {
             playing = false
             resultGame(true)
         }
-
+        for (bonus in bonuses)
+        {
+            bonus.update(dt)
+        }
 
     }
 
@@ -153,6 +161,14 @@ class Game(
 
                 canvas.drawColor(backgroundColor)
 
+                for (block in blocks)
+                {
+                    block.draw(canvas,paint,viewport)
+                }
+                for (bonus in bonuses) {
+
+                    bonus.draw(canvas, paint, viewport, context)
+                }
                 finish.draw(canvas, paint, viewport)
                 gameToolbar.draw(canvas, paint)
                 bird.draw(canvas, paint, viewport)
