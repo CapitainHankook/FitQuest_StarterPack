@@ -118,7 +118,9 @@ class Game(
         if (timeWidhoutShot >= SHOT_DEPOUNCE) {
             bullets.add(Bullet.create(context, bird.position))
             timeWidhoutShot = 0f
+            bird.Shoot()
         }
+
     }
 
     private fun onHeadRotateLeft() {
@@ -143,6 +145,9 @@ class Game(
         timeWidhoutShot += dt
 
         bird.update(dt, blocks)
+
+
+
         gameToolbar.update(dt)
         viewport.centreCamera(bird.position)
         val stayBullet = arrayListOf<Bullet>()
@@ -161,6 +166,15 @@ class Game(
                 bullet.explosioned = true
             }
         }
+        var found: Boolean = false
+        for (block in blocks) {
+            if (block.checkOnCollision(bird.position)) {
+                bird.Stop()
+                found = true
+            }
+        }
+        if (!found)
+            bird.MoveAgain()
 
         if (finish.isCollision(bird.position.top)) {
             playing = false
@@ -175,15 +189,6 @@ class Game(
         }
 
         return null
-        var found: Boolean = false
-        for (block in blocks) {
-            if (block.checkOnCollision(bird.position)) {
-                bird.Stop()
-                found = true
-            }
-        }
-        if (!found)
-            bird.MoveAgain()
     }
 
 

@@ -23,7 +23,7 @@ class SpriteAnimation(
         {
             CurSec=dt;
             Cur++;
-            if (Cur>=8)
+            if (Cur>=frames.size)
                 Cur=0;
         }
 
