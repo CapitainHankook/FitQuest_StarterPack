@@ -32,10 +32,10 @@ class Viewport(private val game : Game, private val screenWidth : Float, private
     }
 
     fun isVisible (position: Position) : Boolean {
-        return position.top >= y - screenHeight || position.top <= y + screenHeight
+        return position.top >= this.y - screenHeight && position.top <= this.y + BOTTOM_PADDING
     }
 
     fun isVisible (y: Float) : Boolean {
-        return y >= this.y - screenHeight ||y <= this.y + screenHeight
+        return y >= this.y - screenHeight && y <= this.y + BOTTOM_PADDING
     }
 }
