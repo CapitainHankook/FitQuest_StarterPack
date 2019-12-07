@@ -29,38 +29,36 @@ class Game(
         context: Context,
         private val size: Point,
         private val resultGame: (Boolean) -> Unit
-) : SurfaceView(context),
-        Runnable {
+        ) : SurfaceView(context),
+    Runnable {
 
     private var playing = false
     var pause = true
     private var thread: Thread? = null
-    private val viewport: Viewport
+    private val viewport : Viewport
 
     private var canvas: Canvas = Canvas()
     private val paint: Paint = Paint()
-
     private var timeWidhoutShot = 0f
 
     companion object {
         // выстрел не чаще
-        private const val SHOT_DEPOUNCE = 2f
-        private const val COORD_END_GAME = 12200F
+        private const val SHOT_DEPOUNCE = 2000
+        private const val COORD_END_GAME = 500F
 
     }
-
     private val bird: Bird = Bird(context, (size.x).toFloat())
     private var blocks: ArrayList<Block>
-    //val bonus : Bonus
+    val bonuses = arrayListOf<Bonus>()
     private var bullets: ArrayList<Bullet>
-    private val finish: Finish
-    private val gameToolbar: GameToolbar
+    val finish: Finish
+    val gameToolbar: GameToolbar
 
     init {
         paint.textSize = 50f
-        viewport = Viewport(this, size.x.toFloat(), size.y.toFloat())
+        viewport =  Viewport(this, size.x.toFloat(), size.y.toFloat())
         blocks = Block.generate(context, size.x.toFloat(), 25)
-        //bonus = Bonus.create()
+        Bonus.init(context)
         bullets = arrayListOf<Bullet>()
         gameToolbar = GameToolbar(this.context, size.x.toFloat())
         finish = Finish(COORD_END_GAME, size.x.toFloat(), this.context)
@@ -98,6 +96,11 @@ class Game(
 
             draw()
 
+//            val timeThisFrame = SystemClock.uptimeMillis() - time
+//            if (timeThisFrame >= 1) {
+//                val fps = 1000 / timeThisFrame
+//                Log.d("thread", "fps:$fps")
+//            }
         }
     }
 
@@ -125,7 +128,6 @@ class Game(
     private fun onHeadRotateRight() {
         bird.Right()
     }
-
     /**
      *  Обновление состояния игры
      *
@@ -189,7 +191,6 @@ class Game(
 
         return null
     }
-
 
     /**
      *  Отрисовка игровых объектов
