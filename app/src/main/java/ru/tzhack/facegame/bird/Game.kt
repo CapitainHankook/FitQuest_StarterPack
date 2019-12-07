@@ -6,6 +6,8 @@ import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.Point
 import android.os.SystemClock
+import android.view.KeyEvent
+import android.view.MotionEvent
 import android.view.SurfaceView
 import androidx.core.content.ContextCompat
 import ru.tzhack.facegame.R
@@ -134,5 +136,23 @@ class Game(
                 holder.unlockCanvasAndPost(canvas)
             }
         }
+    }
+
+    override fun onTouchEvent(event: MotionEvent?): Boolean {
+        event?.let { e->
+            var X:Float= e.getX() ?: 0F;
+            var Y:Float=e.getY() ?: 0F;
+
+            if (e.actionMasked==MotionEvent.ACTION_DOWN) {
+                if ((bird.position.left>=X))
+                    bird.Left();
+                else
+                    bird.Right();
+            } else {
+                bird.Just()
+            }
+                return super.onTouchEvent(event)
+        }
+        return super.onTouchEvent(event)
     }
 }
