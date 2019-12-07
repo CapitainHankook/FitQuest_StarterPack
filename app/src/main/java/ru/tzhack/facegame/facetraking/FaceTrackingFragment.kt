@@ -13,6 +13,7 @@ import com.otaliastudios.cameraview.size.Size
 import ru.tzhack.facegame.R
 import ru.tzhack.facegame.data.model.FaceEmoji
 import ru.tzhack.facegame.databinding.FragmentFaceTrackingBinding
+import ru.tzhack.facegame.facetraking.mlkit.MlKitEngine
 import ru.tzhack.facegame.facetraking.mlkit.listener.MlKitDebugListener
 import ru.tzhack.facegame.facetraking.mlkit.listener.MlKitEmojiListener
 import kotlin.random.Random
@@ -87,29 +88,29 @@ class FaceTrackingFragment : Fragment() {
 
         var first = true
         //TODO: Разблокируй, как только наладишь разметку :)
-//        binding.cameraView.run {
-//            setLifecycleOwner(this@FaceTrackingFragment)
-//            addFrameProcessor { frame ->
-//
-//                if (first && frame.size.height != 0 && frame.size.width != 0) {
-//                    binding.faceOverlayView.run {
-//                        layoutParams = layoutParams.apply {
-//                            width = frame.size.height
-//                            height = frame.size.width
-//                        }
-//                        requestLayout()
-//                    }
-//                    first = false
-//                }
-//
-//                MlKitEngine.extractDataFromFrame(
-//                    frame = frame,
-//                    currentEmoji = currentEmoji,
-//                    listenerEmoji = mlKitEmojiListener,
-//                    debugListener = mlKitDebugListener
-//                )
-//            }
-//        }
+        binding.positionFace.run {
+            setLifecycleOwner(this@FaceTrackingFragment)
+            addFrameProcessor { frame ->
+
+                if (first && frame.size.height != 0 && frame.size.width != 0) {
+                    binding.exampleView.run {
+                        layoutParams = layoutParams.apply {
+                            width = frame.size.height
+                            height = frame.size.width
+                        }
+                        requestLayout()
+                    }
+                    first = false
+                }
+
+                MlKitEngine.extractDataFromFrame(
+                    frame = frame,
+                    currentEmoji = currentEmoji,
+                    listenerEmoji = mlKitEmojiListener,
+                    debugListener = mlKitDebugListener
+                )
+            }
+        }
 
     }
 
