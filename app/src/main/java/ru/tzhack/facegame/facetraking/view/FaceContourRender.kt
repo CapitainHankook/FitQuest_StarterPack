@@ -1,16 +1,14 @@
 package ru.tzhack.facegame.facetraking.view
 
 import android.content.Context
-import android.graphics.Canvas
-import android.graphics.Color
-import android.graphics.PorterDuff
-import android.graphics.Rect
+import android.graphics.*
 import android.util.AttributeSet
 import android.view.View
 import com.google.firebase.ml.vision.common.FirebaseVisionPoint
 import com.otaliastudios.cameraview.size.Size
 
-//TODO: ЗАДАНИЕ #3
+
+//TODO: ё
 /**
  * Задание №3.
  *
@@ -25,6 +23,15 @@ class FaceContourRender @JvmOverloads constructor(
         defStyleAttr: Int = 0
 ) : View(context, attrs, defStyleAttr) {
 
+    private var rectanglePaintBox: Paint = Paint()
+
+    var rectangleColor = Color.GREEN
+    private var rectangleStrokeWidth = 5f
+
+    private var dotPaintCircle: Paint = Paint()
+
+    var dotColor = Color.WHITE
+
     private val dotSize = 3f
 
     /*TODO: Создать два Paint объекта
@@ -33,7 +40,7 @@ class FaceContourRender @JvmOverloads constructor(
 
     /* TODO: faceContour Создать List объектов FirebaseVisionPoint,
     *   это точки, которые необходимо нарисовать */
-
+    private var faceContour : List<FirebaseVisionPoint> = ArrayList<FirebaseVisionPoint>()
     private var rect = Rect()
 
     private var widthScaleFactor = 1.0F
@@ -55,7 +62,9 @@ class FaceContourRender @JvmOverloads constructor(
             }
         }
 
-        //TODO: Очищаем старые точки , и добавляем новые (faceContour)
+        faceContour = points
+
+        //TODO: Очищаем старые точки , и добавляем новые (faceContour) вроде сделано
 
         invalidate()
     }
@@ -63,19 +72,26 @@ class FaceContourRender @JvmOverloads constructor(
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
 
+        rectanglePaintBox.color = rectangleColor
+        rectanglePaintBox.strokeWidth = rectangleStrokeWidth
+
+        dotPaintCircle.color = dotColor
+
         if (this.width != 0 && this.height != 0) {
+
             canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR)
 
+            faceContour.forEach { point ->
+                canvas.drawCircle(point.x.translateX(), point.y.translateY(), dotSize, dotPaintCircle)
+            }
             // TODO: Два цикла
             // TODO: 1. пробегаемся по списку объектов FirebaseVisionPoint
-            // TODO: 2. Для каждого из объектов - рисуем круг на Canvas'e
+            // TODO: 2. Для каждого из объектов - рисуем круг на Canvas'e вроде сделано форичем
             // Не забудьте, что нужно применить translateX и translateY,
             // чтобы "маска" четко легла на лицо
 
-
-
-//            TODO: раскомментировать, как только создадите объект paintBox
-//            canvas.drawRect(rect, paintBox)
+//            TODO: раскомментировать, как только создадите объект paintBox вроде сделано
+            canvas.drawRect(rect, rectanglePaintBox)
         }
     }
 
