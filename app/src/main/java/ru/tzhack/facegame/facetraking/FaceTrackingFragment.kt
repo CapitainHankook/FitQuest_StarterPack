@@ -2,6 +2,7 @@ package ru.tzhack.facegame.facetraking
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -43,9 +44,9 @@ class FaceTrackingFragment : Fragment() {
     private var correctEmojiCount: Int = 0;
 
     private val emojiList = listOf(
-        FaceEmoji.DOUBLE_EYE_CLOSE,
-        FaceEmoji.LEFT_EYE_CLOSE,
-        FaceEmoji.RIGHT_EYE_CLOSE,
+//        FaceEmoji.DOUBLE_EYE_CLOSE,✓
+//        FaceEmoji.LEFT_EYE_CLOSE,✓
+//        FaceEmoji.RIGHT_EYE_CLOSE,✓
 
         FaceEmoji.DOUBLE_EYEBROWN_MOVE,
 
@@ -209,7 +210,7 @@ class FaceTrackingFragment : Fragment() {
     }
 
     private fun isEndGame(): Boolean {
-        val emojiForWin:Int = 5;
+        val emojiForWin:Int = 25;
         if (correctEmojiCount == emojiForWin)
             return true
         else
