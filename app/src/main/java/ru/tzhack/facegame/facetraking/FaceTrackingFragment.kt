@@ -96,6 +96,7 @@ class FaceTrackingFragment : Fragment() {
             addFrameProcessor { frame ->
 
                 if (first && frame.size.height != 0 && frame.size.width != 0) {
+
                     binding.positionFace.run {
                         layoutParams = layoutParams.apply {
                             width = frame.size.height
