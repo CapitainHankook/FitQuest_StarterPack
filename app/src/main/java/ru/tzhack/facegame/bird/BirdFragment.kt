@@ -1,5 +1,7 @@
 package ru.tzhack.facegame.bird
 
+import android.app.AlertDialog
+import android.content.DialogInterface
 import android.graphics.Point
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -63,7 +65,14 @@ class BirdFragment : Fragment() {
         game = null
     }
 
-    private fun onEndGame(isWin : Boolean) : Unit{
-
+    private fun onEndGame(isWon : Boolean) : Unit{
+        val resultDialog = AlertDialog.Builder(this.context)
+        if (isWon) {
+            resultDialog.setTitle("Победа!")
+        } else {
+            resultDialog.setTitle("Поражение!")
+        }
+        resultDialog.setNeutralButton("На стартовую страницу") { dialog : DialogInterface,  id : Int -> {}}
+        resultDialog.create().show()
     }
 }

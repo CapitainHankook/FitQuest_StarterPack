@@ -9,9 +9,7 @@ import android.os.SystemClock
 import android.view.SurfaceView
 import androidx.core.content.ContextCompat
 import ru.tzhack.facegame.R
-import ru.tzhack.facegame.bird.gameobj.Bird
-import ru.tzhack.facegame.bird.gameobj.Finish
-import ru.tzhack.facegame.bird.gameobj.GameToolbar
+import ru.tzhack.facegame.bird.gameobj.*
 import ru.tzhack.facegame.data.model.FaceEmoji
 
 
@@ -40,27 +38,28 @@ class Game(
 
     private var canvas: Canvas = Canvas()
     private val paint: Paint = Paint()
-    val bird: Bird = Bird(context, (size.x).toFloat())
+
+    private var timeWidhoutShot = 0f
 
     companion object {
         // выстрел не чаще
         private const val SHOT_DEPOUNCE = 2000
-        private const val COORD_END_GAME = 500F
+        private const val COORD_END_GAME = 5000F
 
     }
-
-    //val blocks : List<Block>
+    private val bird: Bird = Bird(context, (size.x).toFloat())
+    private var blocks : ArrayList<Block>
     //val bonus : Bonus
-    //val bullets : List<Bullet>
-    val finish: Finish
-    val gameToolbar: GameToolbar
+    private var bullets : ArrayList<Bullet>
+    private val finish: Finish
+    private val gameToolbar: GameToolbar
 
     init {
         paint.textSize = 50f
         viewport =  Viewport(this, size.x.toFloat(), size.y.toFloat())
-        //blocks = Block.generate(context, size.x.toFloat(),20)
+        blocks = Block.generate(context, size.x.toFloat(),5)
         //bonus = Bonus.create()
-        //bullets = arrayListOf<Bullet>()
+        bullets = arrayListOf<Bullet>()
         gameToolbar = GameToolbar(this.context, size.x.toFloat())
         finish = Finish(COORD_END_GAME, size.x.toFloat(), this.context)
     }
@@ -105,18 +104,30 @@ class Game(
         }
     }
 
-    public fun action (action : FaceEmoji) {
+    fun action (action : FaceEmoji) {
         when (action) {
-            FaceEmoji.SMILE -> {
-
-            }
-            FaceEmoji.HEAD_ROTATE_LEFT -> {
-
-            }
-            FaceEmoji.HEAD_ROTATE_RIGHT ->  {
-
-            }
+            FaceEmoji.SMILE -> onSmile()
+            FaceEmoji.HEAD_ROTATE_LEFT -> onHeadRotateLeft()
+            FaceEmoji.HEAD_ROTATE_RIGHT -> onHeadRotateRight()
         }
+    }
+
+    @Synchronized
+    private fun  onSmile() {
+        if (timeWidhoutShot >= SHOT_DEPOUNCE) {
+            bullets.add(Bullet.create(context, bird.position))
+            timeWidhoutShot = 0f
+        }
+    }
+
+    @Synchronized
+    private fun onHeadRotateLeft() {
+        bird.Left()
+    }
+
+    @Synchronized
+    private fun onHeadRotateRight() {
+        bird.Right()
     }
 
     /**
@@ -129,17 +140,43 @@ class Game(
      *
      *  @param dt - прошло секунт после обработки кадра
      */
+    @Synchronized
     private fun update(dt: Float) {
+        timeWidhoutShot += dt
+
         bird.update(dt)
         gameToolbar.update(dt)
         viewport.centreCamera(bird.position)
+        val stayBullet = arrayListOf<Bullet>()
+        for (bullet in bullets) {
+            if (!bullet.destroyed) {
+                stayBullet.add(bullet)
+                bullet.update(dt)
+            }
+        }
+        bullets = stayBullet
+
+        for (bullet in bullets) {
+            val block = findCollisionBlock(bullet)
+            if (block !== null) {
+                blocks.remove(block)
+                bullet.explosioned = true
+            }
+        }
 
         if (finish.isCollision(bird.position.top) ) {
             playing = false
             resultGame(true)
         }
+    }
 
+    private fun findCollisionBlock(bullet : Bullet) : Block? {
+        for (block in blocks) {
+            if (block.checkOnCollision(bullet.position)) return block
 
+        }
+
+        return null
     }
 
     /**
@@ -153,6 +190,10 @@ class Game(
 
                 canvas.drawColor(backgroundColor)
 
+                for (block in blocks) {
+                    block.draw(canvas, paint, viewport)
+                }
+
                 finish.draw(canvas, paint, viewport)
                 gameToolbar.draw(canvas, paint)
                 bird.draw(canvas, paint, viewport)
@@ -160,9 +201,5 @@ class Game(
                 holder.unlockCanvasAndPost(canvas)
             }
         }
-    }
-
-    private fun printEndMessage () {
-
     }
 }
