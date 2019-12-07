@@ -56,7 +56,7 @@ class Game(
 
     init {
         viewport =  Viewport(this, size.x.toFloat(), size.y.toFloat())
-        blocks = Block.generate(context, scaleX,0)
+        blocks = Block.generate(context, (size.x).toFloat(),0)
         bonuses = arrayListOf<Bonus>()
         bullets = arrayListOf<Bullet>()
         gameToolbar = GameToolbar(this.context)
@@ -118,7 +118,19 @@ class Game(
         finish.update()
         bird.update(dt)
         viewport.centreCamera(bird.position)
+        var found: Boolean=false
+        for( block in blocks)
+        {
+            if(block.checkOnCollision(bird.position))
+            {
+                bird.Stop()
+                found=true
+            }
+        }
+        if (!found)
+            bird.MoveAgain()
     }
+
 
     /**
      *  Отрисовка игровых объектов
@@ -137,7 +149,6 @@ class Game(
 
                 for( block in blocks)
                 {
-
                     block.draw(canvas,paint,viewport)
                 }
                 holder.unlockCanvasAndPost(canvas)
@@ -158,8 +169,7 @@ class Game(
             } else {
                 bird.Just()
             }
-                return super.onTouchEvent(event)
         }
-        return super.onTouchEvent(event)
+        return true
     }
 }

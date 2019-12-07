@@ -37,13 +37,18 @@ class Bird(
         private const val MAX_SPEED_HORIZONTAL = 500
     }
 
-    val position=Position((screenX/2)- (WIDTH_SPRITE/2), 0F, WIDTH_SPRITE, HEIGHT_SPRITE);
+    val position=Position((screenX/2)-(WIDTH_SPRITE/2), 0F, WIDTH_SPRITE, HEIGHT_SPRITE);
     val sprAni=SpriteAnimation(context.createBitmaps(WIDTH_SPRITE, HEIGHT_SPRITE,
             R.drawable.a1, R.drawable.a2, R.drawable.a3, R.drawable.a4,
             R.drawable.a5, R.drawable.a6, R.drawable.a7, R.drawable.a8),0.1.toFloat())
     enum class Napr {
         LEFT, JUST, RIGTH
     }
+    enum class NotLeftRigh {
+        NOLEFT, EMPTY, NORIGTH
+    }
+    var nlr=NotLeftRigh.EMPTY
+    var move: Boolean =true
     var napr: Napr=Napr.JUST;
 
 
@@ -57,15 +62,29 @@ class Bird(
      */
     fun update(dt: Float) {
         //шагвверх
-        position.top+= dt* SPEED_VERTICAL_DEFAULT;
+        if (move)
+            position.top+= dt* SPEED_VERTICAL_DEFAULT;
+
         sprAni.update(dt);
-        if (napr==Napr.LEFT&&position.left>0)
+        if (napr==Napr.LEFT&&position.left>0&&nlr!=NotLeftRigh.NOLEFT)
             position.left-=dt* MAX_SPEED_HORIZONTAL;
-        if (napr==Napr.RIGTH&&position.left<screenX-WIDTH_SPRITE)
+        if (napr==Napr.RIGTH&&position.left<screenX-WIDTH_SPRITE&&nlr!=NotLeftRigh.NORIGTH)
            position.left+=dt* MAX_SPEED_HORIZONTAL;
+        Empty()
 
     }
-
+    fun NoLeft()
+    {
+        nlr=NotLeftRigh.NOLEFT
+    }
+    fun NoRigth ()
+    {
+        nlr=NotLeftRigh.NORIGTH
+    }
+    fun Empty ()
+    {
+        nlr=NotLeftRigh.EMPTY
+    }
     fun Left()
     {
         napr=Napr.LEFT
@@ -78,6 +97,15 @@ class Bird(
     {
         napr=Napr.JUST
     }
+    fun Stop()
+    {
+        move=false
+    }
+    fun MoveAgain()
+    {
+        move=true
+    }
+
 
     /**
      * отрисовка текущего фрейма
