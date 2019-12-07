@@ -73,7 +73,7 @@ class FaceTrackingFragment : Fragment() {
 
     private val mlKitDebugListener = object : MlKitDebugListener {
         override fun onDebugInfo(frameSize: Size, face: FirebaseVisionFace?) {
-            face?.let { printContourOnFace(frameSize, it) }
+            printContourOnFace(frameSize, face)
         }
     }
 
@@ -182,14 +182,21 @@ class FaceTrackingFragment : Fragment() {
 
     private fun randNextEmoji(): FaceEmoji = emojiList[Random.Default.nextInt(emojiList.size)]
 
-    private fun printContourOnFace(frameSize: Size, face: FirebaseVisionFace) {
+    private fun printContourOnFace(frameSize: Size, face: FirebaseVisionFace?) {
         val invertFrameSize = Size(frameSize.height, frameSize.width)
-//TODO: как только наладишь разметку, разблокируй это и получишь контур лица
-        binding.faceOverlayView.updateContour(
-            invertFrameSize,
-            face.boundingBox,
-            face.getContour(FirebaseVisionFaceContour.ALL_POINTS).points
-        )
+
+        if (face != null)
+            binding.faceOverlayView.updateContour(
+                    invertFrameSize,
+                    face.boundingBox,
+                    face.getContour(FirebaseVisionFaceContour.ALL_POINTS).points
+            )
+        else
+            binding.faceOverlayView.updateContour(
+                    invertFrameSize,
+                    null,
+                    listOf()
+            )
     }
 
     private fun isEndGame() = false//TODO: correctEmojiCount == emojiForWin
