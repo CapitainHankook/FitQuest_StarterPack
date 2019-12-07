@@ -29,19 +29,22 @@ class Game(
         context: Context,
         private val size: Point,
         private val resultGame: (Boolean) -> Unit
-) : SurfaceView(context),
-        Runnable {
+        ) : SurfaceView(context),
+    Runnable {
 
     private var playing = false
     var pause = true
     private var thread: Thread? = null
-    private val viewport: Viewport
+    private val viewport : Viewport
 
     private var canvas: Canvas = Canvas()
     private val paint: Paint = Paint()
 
     private var timeWidhoutShot = 0f
 
+    val bird: Bird = Bird(context, (size.x).toFloat())
+    val blocks = Block.generate(context, size.x.toFloat(),20)
+    val bonuses = arrayListOf<Bonus>()
     companion object {
         // выстрел не чаще
         private const val SHOT_DEPOUNCE = 2f
@@ -49,8 +52,7 @@ class Game(
 
     }
 
-    private val bird: Bird = Bird(context, (size.x).toFloat())
-    private var blocks: ArrayList<Block>
+
     //val bonus : Bonus
     private var bullets: ArrayList<Bullet>
     private val finish: Finish
@@ -59,11 +61,12 @@ class Game(
     init {
         paint.textSize = 50f
         viewport = Viewport(this, size.x.toFloat(), size.y.toFloat())
-        blocks = Block.generate(context, size.x.toFloat(), 10)
+
         //bonus = Bonus.create()
         bullets = arrayListOf<Bullet>()
         gameToolbar = GameToolbar(this.context, size.x.toFloat())
         finish = Finish(COORD_END_GAME, size.x.toFloat(), this.context)
+        Bonus.init(context)
     }
 
     private val backgroundColor = ContextCompat.getColor(context, R.color.colorPrimaryDark)
@@ -98,6 +101,11 @@ class Game(
 
             draw()
 
+//            val timeThisFrame = SystemClock.uptimeMillis() - time
+//            if (timeThisFrame >= 1) {
+//                val fps = 1000 / timeThisFrame
+//                Log.d("thread", "fps:$fps")
+//            }
         }
     }
 
@@ -171,8 +179,19 @@ class Game(
             bird.MoveAgain()
 
         if (finish.isCollision(bird.position.top)) {
-            playing = false
-            resultGame(true)
+            if (bird.position.top > Bonus.generateWhenPositionY) {
+
+                bonuses += Bonus.create(bird.position, size.x, size.y)
+            }
+            if (finish.isCollision(bird.position.top)) {
+                playing = false
+                resultGame(true)
+            }
+        }
+
+        for (bonus in bonuses)
+        {
+            bonus.update(dt)
         }
     }
 
@@ -205,6 +224,14 @@ class Game(
                     bullet.draw(canvas, paint, viewport)
                 }
 
+                for (block in blocks)
+                {
+                    block.draw(canvas,paint,viewport)
+                }
+                for (bonus in bonuses) {
+
+                    bonus.draw(canvas, paint, viewport, context)
+                }
                 finish.draw(canvas, paint, viewport)
                 gameToolbar.draw(canvas, paint)
                 bird.draw(canvas, paint, viewport)
