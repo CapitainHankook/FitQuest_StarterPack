@@ -66,7 +66,7 @@ class Bullet(
         if (current_distance > 0 && !explosioned) {
             position.top += dt * SPEED
             current_distance -= dt * SPEED
-            if (current_distance <= 0) explosioned = true
+            if (current_distance <= 0) destroyed = true
 
         } else if (explosioned && time_crashed > 0) {
             time_crashed -= dt
@@ -81,8 +81,8 @@ class Bullet(
      * 1. Отрисовка
      */
     fun draw(canvas: Canvas, paint: Paint, viewport: Viewport) {
-        if (explosioned) canvas.drawBitmap(imageCrash, position.left, viewport.convertToDisplay(position), paint)
-        else canvas.drawBitmap(image, position.left, viewport.convertToDisplay(position), paint)
+        if (explosioned) canvas.drawBitmap(imageCrash, position.left - 10f, viewport.convertToDisplay(position) - 160f, paint)
+        else canvas.drawBitmap(image, position.left + 65f, viewport.convertToDisplay(position), paint)
 
     }
 }

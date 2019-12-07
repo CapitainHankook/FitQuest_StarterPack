@@ -59,7 +59,7 @@ class Game(
     init {
         paint.textSize = 50f
         viewport = Viewport(this, size.x.toFloat(), size.y.toFloat())
-        blocks = Block.generate(context, size.x.toFloat(), 15)
+        blocks = Block.generate(context, size.x.toFloat(), 10)
         //bonus = Bonus.create()
         bullets = arrayListOf<Bullet>()
         gameToolbar = GameToolbar(this.context, size.x.toFloat())
@@ -98,11 +98,6 @@ class Game(
 
             draw()
 
-//            val timeThisFrame = SystemClock.uptimeMillis() - time
-//            if (timeThisFrame >= 1) {
-//                val fps = 1000 / timeThisFrame
-//                Log.d("thread", "fps:$fps")
-//            }
         }
     }
 
@@ -113,7 +108,7 @@ class Game(
             FaceEmoji.HEAD_ROTATE_RIGHT -> onHeadRotateRight()
         }
     }
-
+    @Synchronized
     private fun onSmile() {
         if (timeWidhoutShot >= SHOT_DEPOUNCE) {
             bullets.add(Bullet.create(context, bird.position))
@@ -122,11 +117,11 @@ class Game(
         }
 
     }
-
+    @Synchronized
     private fun onHeadRotateLeft() {
         bird.Left()
     }
-
+    @Synchronized
     private fun onHeadRotateRight() {
         bird.Right()
     }
@@ -141,6 +136,7 @@ class Game(
      *
      *  @param dt - прошло секунт после обработки кадра
      */
+    @Synchronized
     private fun update(dt: Float) {
         timeWidhoutShot += dt
 
