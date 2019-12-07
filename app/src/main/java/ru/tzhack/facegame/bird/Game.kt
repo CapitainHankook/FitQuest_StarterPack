@@ -29,13 +29,13 @@ class Game(
         context: Context,
         private val size: Point,
         private val resultGame: (Boolean) -> Unit
-        ) : SurfaceView(context),
-    Runnable {
+) : SurfaceView(context),
+        Runnable {
 
     private var playing = false
     var pause = true
     private var thread: Thread? = null
-    private val viewport : Viewport
+    private val viewport: Viewport
 
     private var canvas: Canvas = Canvas()
     private val paint: Paint = Paint()
@@ -43,20 +43,21 @@ class Game(
 
     companion object {
         // выстрел не чаще
-        private const val SHOT_DEPOUNCE = 2000
-        private const val COORD_END_GAME = 500F
+        private const val SHOT_DEPOUNCE = 2f
+        private const val COORD_END_GAME = 12200F
 
     }
+
     private val bird: Bird = Bird(context, (size.x).toFloat())
     private var blocks: ArrayList<Block>
-    val bonuses = arrayListOf<Bonus>()
+    private val bonuses = arrayListOf<Bonus>()
     private var bullets: ArrayList<Bullet>
-    val finish: Finish
-    val gameToolbar: GameToolbar
+    private val finish: Finish
+    private val gameToolbar: GameToolbar
 
     init {
         paint.textSize = 50f
-        viewport =  Viewport(this, size.x.toFloat(), size.y.toFloat())
+        viewport = Viewport(this, size.x.toFloat(), size.y.toFloat())
         blocks = Block.generate(context, size.x.toFloat(), 25)
         Bonus.init(context)
         bullets = arrayListOf<Bullet>()
@@ -95,12 +96,6 @@ class Game(
             }
 
             draw()
-
-//            val timeThisFrame = SystemClock.uptimeMillis() - time
-//            if (timeThisFrame >= 1) {
-//                val fps = 1000 / timeThisFrame
-//                Log.d("thread", "fps:$fps")
-//            }
         }
     }
 
@@ -111,6 +106,7 @@ class Game(
             FaceEmoji.HEAD_ROTATE_RIGHT -> onHeadRotateRight()
         }
     }
+
     @Synchronized
     private fun onSmile() {
         if (timeWidhoutShot >= SHOT_DEPOUNCE) {
@@ -120,14 +116,17 @@ class Game(
         }
 
     }
+
     @Synchronized
     private fun onHeadRotateLeft() {
         bird.Left()
     }
+
     @Synchronized
     private fun onHeadRotateRight() {
         bird.Right()
     }
+
     /**
      *  Обновление состояния игры
      *
@@ -154,6 +153,15 @@ class Game(
             }
         }
 
+        if(bird.position.top > Bonus.generateWhenPositionY) {
+            bonuses+=Bonus.create(bird.position, size.x,size.y)
+        }
+
+        for (bonus in bonuses) {
+            bonus.update(dt)
+        }
+
+        
         bullets = stayBullet
         for (bullet in bullets) {
             val block = findCollisionBlock(bullet)
@@ -209,6 +217,10 @@ class Game(
 
                 for (bullet in bullets) {
                     bullet.draw(canvas, paint, viewport)
+                }
+
+                for (bonus in bonuses) {
+                    bonus.draw(canvas, paint, viewport, context)
                 }
 
                 finish.draw(canvas, paint, viewport)
