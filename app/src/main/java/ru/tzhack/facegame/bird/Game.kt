@@ -114,6 +114,7 @@ class Game(
     private fun update(dt: Float) {
         finish.update()
         bird.update(dt)
+        viewport.centreCamera(bird.position)
     }
 
     /**
