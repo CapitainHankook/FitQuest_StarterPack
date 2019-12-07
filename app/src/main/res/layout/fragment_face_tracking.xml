@@ -19,16 +19,15 @@
             и текстом "Верно!"-->
 
         <ImageView
+            android:id="@+id/exampleView"
             android:layout_width="268dp"
             android:layout_height="289dp"
-            android:layout_marginEnd="72dp"
-            android:id="@+id/exampleView"
             app:layout_constraintBottom_toTopOf="@+id/order"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/order"
@@ -45,7 +44,7 @@
 
         <com.otaliastudios.cameraview.CameraView
             android:id="@+id/positionFace"
-            android:layout_width="268dp"
+            android:layout_width="0dp"
             android:layout_height="289dp"
             android:layout_marginEnd="72dp"
             android:layout_marginBottom="44dp"
@@ -57,12 +56,13 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/order">
+
             <ru.tzhack.facegame.facetraking.view.FaceContourRender
                 android:id="@+id/face_overlay_view"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                tools:layout_editor_absoluteX="0dp"
-                tools:layout_editor_absoluteY="2dp" />
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintVertical_bias="0.5" />
         </com.otaliastudios.cameraview.CameraView>
 
 
