@@ -66,24 +66,20 @@ class Bird(
 
         sprAni.update(dt);
 
-        var noLfRg=false
+        //var noLfRg=false
         val pos1=Position(position.left-dt* MAX_SPEED_HORIZONTAL, position.top, WIDTH_SPRITE, HEIGHT_SPRITE);
         val pos2=Position(position.left+dt* MAX_SPEED_HORIZONTAL, position.top, WIDTH_SPRITE, HEIGHT_SPRITE);
         for( block in blocks)
         {
-            if(block.checkOnCollision(pos1))
+            if(block.checkOnCollision(pos1)&&move)
             {
                 nlf=LfRg.NOLEFT
-                noLfRg=true;
+                //noLfRg=true;
             }
-            if(block.checkOnCollision(pos2))
+            if(block.checkOnCollision(pos2)&&move)
             {
                 nlf=LfRg.NORIGTH
-                noLfRg=true;
-            }
-            if (!noLfRg)
-            {
-                nlf=LfRg.UP
+                //noLfRg=true;
             }
         }
 
@@ -92,7 +88,7 @@ class Bird(
             position.left-=dt* MAX_SPEED_HORIZONTAL;
         if (napr==Napr.RIGTH&&position.left<screenX-WIDTH_SPRITE&&nlf!=LfRg.NORIGTH)
            position.left+=dt* MAX_SPEED_HORIZONTAL;
-
+        nlf=LfRg.UP
     }
     fun Left()
     {
