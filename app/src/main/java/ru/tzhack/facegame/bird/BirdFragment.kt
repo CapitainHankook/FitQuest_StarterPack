@@ -50,6 +50,7 @@ class BirdFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         game?.start()
+        game?.pause = false
     }
 
     override fun onPause() {

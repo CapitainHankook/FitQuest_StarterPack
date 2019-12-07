@@ -27,9 +27,15 @@
         <activity
             android:name=".welcome.SplashActivity"
             android:noHistory="true"
-            android:theme="@style/AppTheme.SplashTheme"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan">
+
+        </activity>
+
+        <activity
+            android:name=".MainActivity"
+            android:theme="@style/AppTheme"
+            android:screenOrientation="portrait">
             <intent-filter>
 
                 <action android:name="android.intent.action.MAIN" />
@@ -38,10 +44,6 @@
 
             </intent-filter>
         </activity>
-
-        <activity
-            android:name=".MainActivity"
-            android:screenOrientation="portrait"/>
 
     </application>
 

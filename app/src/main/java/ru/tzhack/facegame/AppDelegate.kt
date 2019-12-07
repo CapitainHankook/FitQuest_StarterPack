@@ -16,6 +16,6 @@ class AppDelegate : Application() {
         super.onCreate()
         instance = this
 
-        MlKitEngine.initMlKit()
+//        MlKitEngine.initMlKit()
     }
 }

@@ -1,9 +1,14 @@
 package ru.tzhack.facegame.bird.gameobj
 
 import android.content.Context
+import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Paint
+import ru.tzhack.facegame.R
 import ru.tzhack.facegame.bird.Viewport
+import ru.tzhack.facegame.bird.utils.Position
+import ru.tzhack.facegame.bird.utils.SpriteAnimation
+import ru.tzhack.facegame.bird.utils.createBitmap
 
 /**
  * Реализовать методы
@@ -31,6 +36,19 @@ class Bird(
         private const val MAX_SPEED_HORIZONTAL = 500
     }
 
+    val bitmap = context.createBitmap(R.drawable.a1, WIDTH_SPRITE, HEIGHT_SPRITE);
+    val frames= Array<Bitmap>(8, {context.createBitmap(R.drawable.a1, WIDTH_SPRITE, HEIGHT_SPRITE);
+        context.createBitmap(R.drawable.a2, WIDTH_SPRITE, HEIGHT_SPRITE);
+        context.createBitmap(R.drawable.a3, WIDTH_SPRITE, HEIGHT_SPRITE);
+        context.createBitmap(R.drawable.a4, WIDTH_SPRITE, HEIGHT_SPRITE);
+        context.createBitmap(R.drawable.a5, WIDTH_SPRITE, HEIGHT_SPRITE);
+        context.createBitmap(R.drawable.a6, WIDTH_SPRITE, HEIGHT_SPRITE);
+        context.createBitmap(R.drawable.a7, WIDTH_SPRITE, HEIGHT_SPRITE);
+        context.createBitmap(R.drawable.a8, WIDTH_SPRITE, HEIGHT_SPRITE);});
+    val position=Position((screenX/2)- (WIDTH_SPRITE/2), 15F, WIDTH_SPRITE, HEIGHT_SPRITE);
+    //val sprAni=SpriteAnimation(frames,8)
+    //var poscenter=Float;
+
     /**  обновление игрового состояния
      * 1. Постоянное смещение объекта вверх
      * 2. Реакция на ввод пользователя смещение по горизонтали
@@ -40,13 +58,27 @@ class Bird(
      * 6. Обработка эффекта от бонуса
      */
     fun update(dt: Float) {
+        //шагвверх
+        position.top+= dt* SPEED_VERTICAL_DEFAULT;
 
+
+
+
+    }
+
+    fun Offset(ofst:Float)
+    {
+        if (ofst>screenX)
+            position.left=ofst;
+        else position.left=ofst;
     }
 
     /**
      * отрисовка текущего фрейма
      */
     fun draw(canvas: Canvas, paint: Paint, viewport: Viewport) {
+
+        canvas.drawBitmap(bitmap, position.left, position.top, paint);
 
     }
 

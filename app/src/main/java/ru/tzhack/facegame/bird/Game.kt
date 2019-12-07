@@ -9,6 +9,7 @@ import android.os.SystemClock
 import android.view.SurfaceView
 import androidx.core.content.ContextCompat
 import ru.tzhack.facegame.R
+import ru.tzhack.facegame.bird.gameobj.Bird
 
 
 /**
@@ -34,6 +35,8 @@ class Game(
 
     private var canvas: Canvas = Canvas()
     private val paint: Paint = Paint()
+    var bird: Bird = Bird(context, (size.x).toFloat());
+    var viewport: Viewport= Viewport(15F);
 
     companion object {
         // выстрел не чаще
@@ -105,7 +108,7 @@ class Game(
                 canvas = lockCanvas
 
                 canvas.drawColor(backgroundColor)
-
+                bird.draw(canvas, paint, viewport)
 
                 holder.unlockCanvasAndPost(canvas)
             }
