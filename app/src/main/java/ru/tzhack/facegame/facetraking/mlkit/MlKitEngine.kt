@@ -34,6 +34,7 @@ object MlKitEngine {
         val options = FirebaseVisionFaceDetectorOptions.Builder()
                 .setPerformanceMode(FirebaseVisionFaceDetectorOptions.FAST)
                 .setContourMode(FirebaseVisionFaceDetectorOptions.ALL_CONTOURS)
+                .setLandmarkMode(FirebaseVisionFaceDetectorOptions.ALL_LANDMARKS)
                 .enableTracking()
                 .build()
 
