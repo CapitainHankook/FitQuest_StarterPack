@@ -26,7 +26,7 @@ class FaceContourRender @JvmOverloads constructor(
     private var rectanglePaintBox: Paint = Paint()
 
     var rectangleColor = Color.GREEN
-    private var rectangleStrokeWidth = 0.1f
+    private var rectangleStrokeWidth = 1.5f
 
     private var dotPaintCircle: Paint = Paint()
 
@@ -34,13 +34,16 @@ class FaceContourRender @JvmOverloads constructor(
 
     private val dotSize = 3f
 
-    /*TODO: Создать два Paint объекта
-    *  1. Будем рисовать точки (белый)
-    *  2. Будем рисовать "квадрат" лица */
 
-    /* TODO: faceContour Создать List объектов FirebaseVisionPoint,
-    *   это точки, которые необходимо нарисовать */
-    private var faceContour : List<FirebaseVisionPoint> = ArrayList<FirebaseVisionPoint>()
+    init {
+        rectanglePaintBox.color = rectangleColor
+        rectanglePaintBox.style = Paint.Style.STROKE
+        rectanglePaintBox.strokeWidth = rectangleStrokeWidth
+
+        dotPaintCircle.color = dotColor
+    }
+
+    private var faceContour: List<FirebaseVisionPoint> = ArrayList()
     private var rect = Rect()
 
     private var widthScaleFactor = 1.0F
@@ -51,21 +54,17 @@ class FaceContourRender @JvmOverloads constructor(
             faceRect: Rect?,
             points: List<FirebaseVisionPoint>
     ) {
-        println("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
         frameSize.let {
             widthScaleFactor = width.toFloat() / it.width.toFloat()
             heightScaleFactor = height.toFloat() / it.height.toFloat()
         }
 
-        faceRect?.let {
-            rect = it.apply {
-                set(left.translateX(), top.translateY(), right.translateX(), bottom.translateY())
-            }
+        if (faceRect == null) rect.setEmpty()
+        else rect = faceRect.apply {
+            set(left.translateX(), top.translateY(), right.translateX(), bottom.translateY())
         }
 
         faceContour = points
-
-        //TODO: Очищаем старые точки , и добавляем новые (faceContour) вроде сделано
 
         invalidate()
     }
@@ -79,19 +78,12 @@ class FaceContourRender @JvmOverloads constructor(
         dotPaintCircle.color = dotColor
 
         if (this.width != 0 && this.height != 0) {
-
             canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR)
 
             faceContour.forEach { point ->
                 canvas.drawCircle(point.x.translateX(), point.y.translateY(), dotSize, dotPaintCircle)
             }
-            // TODO: Два цикла
-            // TODO: 1. пробегаемся по списку объектов FirebaseVisionPoint
-            // TODO: 2. Для каждого из объектов - рисуем круг на Canvas'e вроде сделано форичем
-            // Не забудьте, что нужно применить translateX и translateY,
-            // чтобы "маска" четко легла на лицо
 
-//            TODO: раскомментировать, как только создадите объект paintBox вроде сделано
             canvas.drawRect(rect, rectanglePaintBox)
         }
     }

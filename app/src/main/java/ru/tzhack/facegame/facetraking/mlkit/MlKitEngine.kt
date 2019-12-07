@@ -12,27 +12,29 @@ import ru.tzhack.facegame.facetraking.mlkit.listener.MlKitDebugListener
 import ru.tzhack.facegame.facetraking.mlkit.listener.MlKitEmojiListener
 import ru.tzhack.facegame.facetraking.mlkit.listener.MlKitHeroListener
 import ru.tzhack.facegame.facetraking.util.*
+import java.time.LocalDate
+import java.time.LocalDateTime
 import java.util.concurrent.atomic.AtomicBoolean
 
 const val maxHeadZ = 25F
 const val minHeadZ = maxHeadZ * -1
 
+const val framesWithoutFaceGap = 10
+
 object MlKitEngine {
 
     private var faceDetector: FirebaseVisionFaceDetector? = null
 
+    private var framesWithoutFace = 0
+    private var faceWas = false
 
-    /* TODO: "Задача со звездочкой" - подумай, как нам пропускать Frame'ы,
-    *   которые мы не успеваем обработать.
-    * Как и где нам использовать данную переменную? */
     private var analyzing = AtomicBoolean(false)
 
     fun initMlKit() {
-//        throw Exception("Упс! Кто-то сломал метод: 'initMlKit'")
-
         val options = FirebaseVisionFaceDetectorOptions.Builder()
+                .setPerformanceMode(FirebaseVisionFaceDetectorOptions.FAST)
                 .setContourMode(FirebaseVisionFaceDetectorOptions.ALL_CONTOURS)
-                //TODO: Нам нужна быстрота + все контуры лица + все классификации...
+                .enableTracking()
                 .build()
 
         faceDetector = FirebaseVision.getInstance().getVisionFaceDetector(options)
@@ -45,38 +47,38 @@ object MlKitEngine {
             listenerEmoji: MlKitEmojiListener? = null,
             debugListener: MlKitDebugListener? = null
     ) {
+        if(analyzing.get()) return
+        analyzing.set(true)
+
         val frameSize = frame.size
+        var faceFound = false
         getFaceDetector().detectInImage(frame.getVisionImageFromFrame())
                 .addOnSuccessListener { faces ->
-                    if(faces.isNotEmpty())
-                    {
-                        val face = faces[0]
-
-                        if (face.getContour(FirebaseVisionFaceContour.ALL_POINTS).points.isNotEmpty()) {
-                            if (currentEmoji == null) listenerHero?.let { calculateHeroActions(face, it) }
-                            else listenerEmoji?.let { calculateEmojiActions(face, currentEmoji, it) }
-
-                            //Debug Info
-                            debugListener?.onDebugInfo(frameSize, face)
+                    if (faces.isNotEmpty()) {
+                        val currentFace = faces[0]
+                        if (currentFace.getContour(FirebaseVisionFaceContour.ALL_POINTS).points.isNotEmpty()) {
+                            if (currentEmoji == null) listenerHero?.let { calculateHeroActions(currentFace, it) }
+                            else listenerEmoji?.let { calculateEmojiActions(currentFace, currentEmoji, it) }
+                            debugListener?.onDebugInfo(frameSize, currentFace)
+                            faceFound = true
+                            faceWas = true
+                            framesWithoutFace = 0
                         }
                     }
-                    /*TODO: Настраиваем.
-                    *  1. Добавляем проверку, что faces - не пустые
-                    *  2. Работаем только с одним лицом. В переменную face сохраните найденное лицо.
-                    *  3. */
-
-                    // Защита от ситуации, когда точки не были получены
-//                    if (face.getContour(FirebaseVisionFaceContour.ALL_POINTS).points.isNotEmpty()) {
-//                        if (currentEmoji == null) listenerHero?.let { calculateHeroActions(face, it) }
-//                        else listenerEmoji?.let { calculateEmojiActions(face, currentEmoji, it) }
-//
-//                        //Debug Info
-//                        debugListener?.onDebugInfo(frameSize, face)
-//                    }
                 }
                 .addOnFailureListener {
                     listenerHero?.onError(it)
                 }
+        if (faceWas) {
+            if (!faceFound) framesWithoutFace++
+            if (framesWithoutFace > framesWithoutFaceGap) {
+                debugListener?.onDebugInfo(frameSize, null)
+                framesWithoutFace = 0
+                faceWas = false
+            }
+        }
+
+        analyzing.set(false)
     }
 
     private fun calculateHeroActions(face: FirebaseVisionFace, listener: MlKitHeroListener) {
