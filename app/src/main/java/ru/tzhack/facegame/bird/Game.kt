@@ -109,10 +109,11 @@ class Game(
 
     @Synchronized
     private fun onSmile() {
-        if (timeWidhoutShot >= SHOT_DEPOUNCE) {
+        if (timeWidhoutShot >= SHOT_DEPOUNCE &&  gameToolbar.countShots > 0) {
             bullets.add(Bullet.create(context, bird.position))
             timeWidhoutShot = 0f
             bird.Shoot()
+            gameToolbar.countShots--
         }
 
     }
@@ -161,7 +162,7 @@ class Game(
             bonus.update(dt)
         }
 
-        
+
         bullets = stayBullet
         for (bullet in bullets) {
             val block = findCollisionBlock(bullet)
@@ -177,6 +178,19 @@ class Game(
                 found = true
             }
         }
+
+        val catchBonus = findCollisionBonuse()
+        if (catchBonus!== null) {
+            bonuses.remove(catchBonus)
+
+            when(catchBonus.type) {
+                BonusType.SHOT -> onBonusShot()
+                BonusType.SPEED_DOWN -> {}
+                BonusType.SPEED_UP -> {}
+                BonusType.TIME -> onBonusTime()
+            }
+        }
+
         if (!found)
             bird.MoveAgain()
 
@@ -191,9 +205,26 @@ class Game(
         }
     }
 
+    private fun onBonusShot() {
+        gameToolbar.countShots++
+    }
+
+    private fun onBonusTime() {
+        gameToolbar.catchupTimeBonus()
+    }
+
     private fun findCollisionBlock(bullet: Bullet): Block? {
         for (block in blocks) {
             if (block.checkOnCollision(bullet.position)) return block
+
+        }
+
+        return null
+    }
+
+    private fun findCollisionBonuse(): Bonus? {
+        for (bonus in bonuses) {
+            if (bonus.checkOnCollision(bird.position)) return bonus
 
         }
 

@@ -22,7 +22,7 @@ class GameToolbar(context: Context, widthScreen : Float) {
     // увелечение таймера при поднятии бонуса
     private val bonusTime = 5f
 
-    private var countShots = 0
+    var countShots = 0
 
     private val imageShots =  context.createBitmap(R.drawable.bonus_shot, sideSprite, sideSprite)
 
@@ -66,7 +66,8 @@ class GameToolbar(context: Context, widthScreen : Float) {
         return "0" + (time.toInt() / 60).toString() + ":" + secondStr
     }
 
-    fun catchupBonus (){
+    fun catchupTimeBonus (){
         time += bonusTime
     }
+
 }

@@ -90,6 +90,10 @@ class Bonus(
         }
     }
 
+    fun checkOnCollision(bird_position: Position): Boolean {
+        return position.contains(bird_position)
+    }
+
     /**
      *  Обновление позиции
      */
