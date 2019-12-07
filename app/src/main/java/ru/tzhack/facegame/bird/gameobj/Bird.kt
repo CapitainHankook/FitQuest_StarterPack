@@ -1,13 +1,16 @@
 package ru.tzhack.facegame.bird.gameobj
 
 import android.content.Context
+import android.graphics.Bitmap
 import android.graphics.Canvas
+import android.graphics.Matrix
 import android.graphics.Paint
 import ru.tzhack.facegame.R
 import ru.tzhack.facegame.bird.Viewport
 import ru.tzhack.facegame.bird.utils.Position
 import ru.tzhack.facegame.bird.utils.SpriteAnimation
 import ru.tzhack.facegame.bird.utils.createBitmaps
+
 
 /**
  * Реализовать методы
@@ -37,6 +40,9 @@ class Bird(
     var currentspeed: Int=SPEED_VERTICAL_DEFAULT;
     var currenthorspeed: Int=MAX_SPEED_HORIZONTAL;
     var curBonusTime: Float=0F;
+
+    //var curKoef:Float=1F;
+
     val position=Position((screenX/2)-(WIDTH_SPRITE/2), 0F, WIDTH_SPRITE, HEIGHT_SPRITE);
     val sprAni=SpriteAnimation(context.createBitmaps(WIDTH_SPRITE, HEIGHT_SPRITE,
             R.drawable.a1, R.drawable.a2, R.drawable.a3, R.drawable.a4,
@@ -116,14 +122,14 @@ class Bird(
     fun SpeedUp(){
         curBonusTime=0F;
         birdspeed=Speed.FAST
-        currentspeed += 200;
-        currenthorspeed+=200;
+        currentspeed =350;
+        currenthorspeed=350;
     }
     fun SpeedDown(){
         curBonusTime=0F;
         birdspeed=Speed.SLOW
-        currentspeed -= 150;
-        currenthorspeed-=150;
+        currentspeed =50;
+        currenthorspeed=50;
     }
 
     fun Shoot()
@@ -131,13 +137,18 @@ class Bird(
         shoot=true
         shootAnimation.reset()
     }
-    fun Left()
+    fun Left(koef:Float)
     {
         napr=Napr.LEFT
+        //currentspeed=(koef* SPEED_VERTICAL_DEFAULT).toInt();
+        currenthorspeed=(koef* MAX_SPEED_HORIZONTAL).toInt();
     }
-    fun Right()
+    fun Right(koef:Float)
     {
         napr=Napr.RIGTH
+        //currentspeed=(koef* SPEED_VERTICAL_DEFAULT).toInt();
+        currenthorspeed=(koef* MAX_SPEED_HORIZONTAL).toInt();
+
     }
     fun Just()
     {
@@ -158,9 +169,33 @@ class Bird(
      */
     var shootDraw: Int=0;
     fun draw(canvas: Canvas, paint: Paint, viewport: Viewport) {
-        if (!shoot)
-        canvas.drawBitmap(sprAni.getCurrent(), position.left, viewport.convertToDisplay(position), paint)
-        else {canvas.drawBitmap(shootAnimation.getCurrent(), position.left, viewport.convertToDisplay(position), paint)
+        if (!shoot) {
+            var bOutput: Bitmap
+            var degrees = 0f //rotation degree
+
+            val matrix = Matrix()
+            bOutput = Bitmap.createBitmap(sprAni.getCurrent(), 0, 0,
+                    sprAni.getCurrent().width, sprAni.getCurrent().height, matrix, true)
+            if (napr==Napr.LEFT) {
+                degrees=-25f;
+                matrix.setRotate(degrees)
+                bOutput = Bitmap.createBitmap(sprAni.getCurrent(), 0, 0,
+                        sprAni.getCurrent().width, sprAni.getCurrent().height, matrix, true)
+            }
+            if (napr==Napr.RIGTH) {
+                degrees=25f;
+                matrix.setRotate(degrees)
+                bOutput = Bitmap.createBitmap(sprAni.getCurrent(), 0, 0,
+                        sprAni.getCurrent().width, sprAni.getCurrent().height, matrix, true)
+            }
+            if (napr==Napr.JUST)
+            {
+                degrees=0f;
+                matrix.setRotate(degrees)
+            }
+            canvas.drawBitmap(bOutput, position.left, viewport.convertToDisplay(position), paint)
+
+        }else {canvas.drawBitmap(shootAnimation.getCurrent(), position.left, viewport.convertToDisplay(position), paint)
             shootDraw++;
             if (shootDraw==4)
             {

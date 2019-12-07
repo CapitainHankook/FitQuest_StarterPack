@@ -121,12 +121,12 @@ class Game(
 
     @Synchronized
     public fun onHeadRotateLeft(koef: Float) {
-        bird.Left()
+        bird.Left(koef)
     }
 
     @Synchronized
     public fun onHeadRotateRight(koef: Float) {
-        bird.Right()
+        bird.Right(koef)
     }
 
     /**
@@ -301,9 +301,9 @@ class Game(
                 if (size.y / 2 > Y) {
                     onSmile()
                 } else if ((bird.position.left >= X))
-                    onHeadRotateLeft(0f)
+                    onHeadRotateLeft((bird.position.left - X)/1000)
                 else
-                    onHeadRotateRight(0f)
+                    onHeadRotateRight((X-bird.position.left)/1000)
 
 
             } else {
