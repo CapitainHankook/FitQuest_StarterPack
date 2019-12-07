@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import com.bumptech.glide.Glide
 import com.google.firebase.ml.vision.face.FirebaseVisionFace
 import com.google.firebase.ml.vision.face.FirebaseVisionFaceContour
 import com.otaliastudios.cameraview.size.Size
@@ -39,6 +40,7 @@ class FaceTrackingFragment : Fragment() {
     private lateinit var binding: FragmentFaceTrackingBinding
 
     private var currentEmoji: FaceEmoji? = null
+    private var correctEmojiCount: Int = 0;
 
     private val emojiList = listOf(
         FaceEmoji.DOUBLE_EYE_CLOSE,
@@ -130,6 +132,7 @@ class FaceTrackingFragment : Fragment() {
         lockEmojiProcess()
 
         //TODO: увеличь число корректных эмоций
+        correctEmojiCount++;
 
         if (isEndGame()) showWinDialog()
         else {
@@ -140,6 +143,8 @@ class FaceTrackingFragment : Fragment() {
 
             После отображения Overlay'я - обнови эмоцию.
             */
+
+
             updateEmojiOnScreen()
         }
     }
@@ -159,14 +164,18 @@ class FaceTrackingFragment : Fragment() {
     private fun updateEmojiOnScreen() {
         var newEmoji = randNextEmoji()
 
+
         //TODO: "Задача со звездочкой" - сделай так,
         // чтобы не было двух одинаковых эмоций подряд
+        while (currentEmoji == newEmoji)
+            newEmoji = randNextEmoji()
 
         currentEmoji = newEmoji
         currentEmoji?.let {
-//            binding.txtEmojiDescription.setText(it.resDescription)
+            binding.order.setText(it.resDescription)
 
             //TODO: Используй Glide, чтобы отобразить .gif (currentEmoji.resAnim)
+            currentEmoji?.let {Glide.with(this).load(it.resAnim).into(binding.exampleView)}
         }
 
         unlockEmojiProcess()
@@ -192,5 +201,11 @@ class FaceTrackingFragment : Fragment() {
         )
     }
 
-    private fun isEndGame() = false//TODO: correctEmojiCount == emojiForWin
+    private fun isEndGame(): Boolean {
+        val emojiForWin:Int = 5;
+        if (correctEmojiCount == emojiForWin)
+            return true
+        else
+            return false
+    }//TODO: correctEmojiCount == emojiForWin
 }

@@ -74,7 +74,7 @@ class FaceContourRender @JvmOverloads constructor(
         super.onDraw(canvas)
 
         rectanglePaintBox.color = rectangleColor
-        rectanglePaintBox. .strokeWidth = rectangleStrokeWidth
+        rectanglePaintBox.strokeWidth = rectangleStrokeWidth
 
         dotPaintCircle.color = dotColor
 

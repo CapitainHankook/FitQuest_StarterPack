@@ -37,13 +37,11 @@
             android:text="Наклоните голову назад"
             android:textSize="30dp"
             android:gravity="center"
-            android:textColor="@color/colorTextPrimary"
+            android:textColor="@color/colorPrimary"
             app:layout_constraintBottom_toTopOf="@+id/positionFace"
             app:layout_constraintTop_toBottomOf="@+id/exampleView"
             app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent">
-
-        </TextView>
+            app:layout_constraintRight_toRightOf="parent"/>
 
         <com.otaliastudios.cameraview.CameraView
             android:id="@+id/positionFace"
@@ -59,14 +57,15 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/order">
-
+            <ru.tzhack.facegame.facetraking.view.FaceContourRender
+                android:id="@+id/face_overlay_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                tools:layout_editor_absoluteX="0dp"
+                tools:layout_editor_absoluteY="2dp" />
         </com.otaliastudios.cameraview.CameraView>
 
-        <ru.tzhack.facegame.facetraking.view.FaceContourRender
-            android:id="@+id/face_overlay_view"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            />
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
