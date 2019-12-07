@@ -6,20 +6,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import com.bumptech.glide.Glide
+import kotlinx.android.synthetic.main.fragment_main.*
 
 interface StartGameListener {
     fun onStartClick()
 }
-
-//TODO: ЗАДАНИЕ #2
-/**
- * Задание №2.
- *
- * Создание Logo Screen.
- *
- * Здесь реализуем интерфейс, как на макете.
- *
- * */
 
 class MainFragment : Fragment() {
 
@@ -41,11 +33,14 @@ class MainFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        //TODO: используйте Glide, отобразите с его помощью .gif 'R.drawable.logo_anim'
-        //TODO: также, нужно сделать Crop для изображения
+        Glide.with(img_logo)
+            .asGif()
+            .centerCrop()
+            .circleCrop()
+            .load(R.drawable.logo_anim)
+            .into(img_logo)
 
-
-        //TODO: при нажатии на экран, необходимо стартовать игру 'listener?.onStartClick()'
+        view.setOnClickListener { listener?.onStartClick() }
     }
 
     override fun onAttach(context: Context) {

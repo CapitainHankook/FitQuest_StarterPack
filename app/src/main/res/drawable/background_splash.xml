@@ -3,7 +3,8 @@
 
     <item android:drawable="@color/colorPrimaryDark"/>
     <item>
-        <bitmap android:src="@drawable/sbis_icon"/>
+        <bitmap android:src="@drawable/sbis_icon"
+        android:gravity="center"/>
     </item>
 
 </layer-list>
