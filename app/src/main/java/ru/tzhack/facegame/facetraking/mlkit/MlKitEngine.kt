@@ -12,9 +12,8 @@ import ru.tzhack.facegame.facetraking.mlkit.listener.MlKitDebugListener
 import ru.tzhack.facegame.facetraking.mlkit.listener.MlKitEmojiListener
 import ru.tzhack.facegame.facetraking.mlkit.listener.MlKitHeroListener
 import ru.tzhack.facegame.facetraking.util.*
-import java.time.LocalDate
-import java.time.LocalDateTime
 import java.util.concurrent.atomic.AtomicBoolean
+import java.util.concurrent.atomic.AtomicInteger
 
 const val maxHeadZ = 25F
 const val minHeadZ = maxHeadZ * -1
@@ -25,16 +24,18 @@ object MlKitEngine {
 
     private var faceDetector: FirebaseVisionFaceDetector? = null
 
-    private var framesWithoutFace = 0
-    private var faceWas = false
+    private var framesWithoutFace = AtomicInteger(0)
+    private var faceWas = AtomicBoolean(false)
 
     private var analyzing = AtomicBoolean(false)
 
     fun initMlKit() {
         val options = FirebaseVisionFaceDetectorOptions.Builder()
-                .setPerformanceMode(FirebaseVisionFaceDetectorOptions.FAST)
-                .setContourMode(FirebaseVisionFaceDetectorOptions.ALL_CONTOURS)
                 .enableTracking()
+                .setContourMode(FirebaseVisionFaceDetectorOptions.ALL_CONTOURS)
+                .setLandmarkMode(FirebaseVisionFaceDetectorOptions.ALL_LANDMARKS)
+                .setClassificationMode(FirebaseVisionFaceDetectorOptions.ALL_CLASSIFICATIONS)
+                .setPerformanceMode(FirebaseVisionFaceDetectorOptions.ACCURATE)
                 .build()
 
         faceDetector = FirebaseVision.getInstance().getVisionFaceDetector(options)
@@ -61,20 +62,20 @@ object MlKitEngine {
                             else listenerEmoji?.let { calculateEmojiActions(currentFace, currentEmoji, it) }
                             debugListener?.onDebugInfo(frameSize, currentFace)
                             faceFound = true
-                            faceWas = true
-                            framesWithoutFace = 0
+                            faceWas.set(true)
+                            framesWithoutFace.set(0)
                         }
                     }
                 }
                 .addOnFailureListener {
                     listenerHero?.onError(it)
                 }
-        if (faceWas) {
-            if (!faceFound) framesWithoutFace++
-            if (framesWithoutFace > framesWithoutFaceGap) {
+        if (faceWas.get()) {
+            if (!faceFound) framesWithoutFace.incrementAndGet()
+            if (framesWithoutFace.get() > framesWithoutFaceGap) {
                 debugListener?.onDebugInfo(frameSize, null)
-                framesWithoutFace = 0
-                faceWas = false
+                framesWithoutFace.set(0)
+                faceWas.set(false)
             }
         }
 
