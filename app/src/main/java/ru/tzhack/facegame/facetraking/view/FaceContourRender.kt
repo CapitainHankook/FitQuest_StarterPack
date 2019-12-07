@@ -8,7 +8,7 @@ import com.google.firebase.ml.vision.common.FirebaseVisionPoint
 import com.otaliastudios.cameraview.size.Size
 
 
-//TODO: ё
+//TODO: ЗАДАНИЕ #3
 /**
  * Задание №3.
  *
