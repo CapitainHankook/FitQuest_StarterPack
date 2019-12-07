@@ -44,7 +44,7 @@ class Game(
 
     companion object {
         // выстрел не чаще
-        private const val SHOT_DEPOUNCE = 5f
+        private const val SHOT_DEPOUNCE = 2f
         private const val COORD_END_GAME = 5000F
 
     }
@@ -146,8 +146,6 @@ class Game(
 
         bird.update(dt, blocks)
 
-
-
         gameToolbar.update(dt)
         viewport.centreCamera(bird.position)
         val stayBullet = arrayListOf<Bullet>()
@@ -226,14 +224,14 @@ class Game(
             var Y: Float = e.getY() ?: 0F
 
             if (e.actionMasked == MotionEvent.ACTION_DOWN) {
-                if ((bird.position.left >= X))
+                if (size.y / 2 > Y) {
+                    onSmile()
+                } else if ((bird.position.left >= X))
                     onHeadRotateLeft()
                 else
                     onHeadRotateRight()
 
-                if (size.y / 2 > Y) {
-                    onSmile()
-                }
+
             } else {
                 bird.Just()
             }

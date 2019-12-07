@@ -38,9 +38,9 @@ class Bird(
     val position=Position((screenX/2)-(WIDTH_SPRITE/2), 0F, WIDTH_SPRITE, HEIGHT_SPRITE);
     val sprAni=SpriteAnimation(context.createBitmaps(WIDTH_SPRITE, HEIGHT_SPRITE,
             R.drawable.a1, R.drawable.a2, R.drawable.a3, R.drawable.a4,
-            R.drawable.a5, R.drawable.a6, R.drawable.a7, R.drawable.a8),0.1.toFloat())
+            R.drawable.a5, R.drawable.a6, R.drawable.a7, R.drawable.a8),0.5.toFloat())
     val shootAnimation=SpriteAnimation(context.createBitmaps(WIDTH_SPRITE, HEIGHT_SPRITE,
-            R.drawable.as1, R.drawable.as2, R.drawable.as3, R.drawable.as4),0.3.toFloat())
+            R.drawable.as1, R.drawable.as2, R.drawable.as3, R.drawable.as4),0.5.toFloat())
 
     enum class Napr {
         LEFT, JUST, RIGTH
@@ -96,6 +96,7 @@ class Bird(
     fun Shoot()
     {
         shoot=true
+        shootAnimation.reset()
     }
     fun Left()
     {
@@ -132,6 +133,7 @@ class Bird(
             {
                 shoot=false;
                 shootDraw=0;
+                sprAni.reset()
             }
         }
     }
