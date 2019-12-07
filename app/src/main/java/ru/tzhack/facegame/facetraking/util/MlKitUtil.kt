@@ -1,5 +1,6 @@
 package ru.tzhack.facegame.facetraking.util
 
+import com.google.android.gms.vision.face.Contour
 import com.google.firebase.ml.vision.face.FirebaseVisionFace
 
 //TODO: величину дельт, вы должны подобрать, после того, как поиграетесь с камерой
@@ -22,7 +23,23 @@ private const val correctEyeBrownMoveDelta = 0F
  * Метод для проверки открытого рта на лице игрока.
  * */
 fun FirebaseVisionFace.checkOpenMouthOnFaceAvailable(): Boolean {
-    //TODO: Реализовать логику обнаружения данного действия.
+//    88-96	Upper lip (bottom)
+//    97-105	Lower lip (top)
+//    106-116	Upper lip (top)
+//    117-125	Lower lip (bottom)
+
+    val upperLipTop = this.getContour(Contour.UPPER_LIP_TOP)
+    val lowerLipTop = this.getContour(Contour.LOWER_LIP_TOP)
+
+    val upperLipBottom = this.getContour(Contour.UPPER_LIP_BOTTOM)
+    val lowerLipBottom = this.getContour(Contour.LOWER_LIP_BOTTOM)
+
+    println("upper LIP " + upperLipTop.points.size)
+    println("upper LIP " +lowerLipTop.points.size)
+
+    println("lower LIP " +upperLipBottom.points.size)
+    println("lower LIP " +lowerLipBottom.points.size)
+
     return false
 }
 
