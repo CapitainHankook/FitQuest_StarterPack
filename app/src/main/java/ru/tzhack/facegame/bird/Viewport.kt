@@ -1,5 +1,7 @@
 package ru.tzhack.facegame.bird
 
+import ru.tzhack.facegame.bird.utils.Position
+
 /**
  *  Управление игровой областью
  *
@@ -8,10 +10,28 @@ package ru.tzhack.facegame.bird
  *  2. Центрирование на объекте пользователя
  *  3. Проверка попадает ли игровой объект в область дисплея
  */
-class Viewport(private val screenY: Float) {
+class Viewport(private val game : Game, private val screenWidth : Float, private val screenHeight: Float) {
+    public var y : Float = 0f
 
     companion object {
         // отступ снизу при центрировании на игровом объекта
         private const val BOTTOM_PADDING = 300f
     }
+
+    fun convertToDisplay (position : Position) : Float {
+        return y - position.top
+    }
+
+    fun convertToDisplay (yPosition:  Float) : Float {
+        return y - yPosition
+    }
+
+
+    fun centreCamera(birdPosition: Position) {
+        y = birdPosition.top + screenHeight - BOTTOM_PADDING
+    }
+
+    /*fun isVisible (position: Position) : Boolean {
+
+    }*/
 }
