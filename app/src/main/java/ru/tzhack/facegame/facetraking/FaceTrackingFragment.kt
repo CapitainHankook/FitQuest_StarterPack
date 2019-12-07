@@ -50,7 +50,7 @@ class FaceTrackingFragment : Fragment() {
 
         FaceEmoji.DOUBLE_EYEBROWN_MOVE,
 
-        FaceEmoji.SMILE,
+//        FaceEmoji.SMILE,
         FaceEmoji.MOUTH_OPEN,
 
         FaceEmoji.HEAD_BIAS_LEFT,
@@ -210,7 +210,7 @@ class FaceTrackingFragment : Fragment() {
     }
 
     private fun isEndGame(): Boolean {
-        val emojiForWin:Int = 25;
+        val emojiForWin:Int = 10;
         if (correctEmojiCount == emojiForWin)
             return true
         else
